@@ -125,9 +125,11 @@ const indexRoute = require('./routes/index');
 const authRoute = require('./routes/auth');
 const accountRoute = require('./routes/account');
 const socketIO = require('./routes/websockets')(io);
+const gameRoute = require('./routes/game');
 app.use('/', indexRoute);
 app.use('/auth', authRoute);
 app.use('/account', accountRoute);
+app.use('/', gameRoute);
 
 /**
  * Start Express server.

@@ -1,5 +1,48 @@
 extends layout
 
 block content
-  .row
-    .col-sm-6
+  //- .row
+  //-   .col-sm-6
+  //- video(muted='', loop='')
+  //-   source(src='./src/test1.mp4', type='video/mp4')
+  .container-fluid#mainContainer
+    video(muted='', loop='')
+      source(src='./src/test1.mp4', type='video/mp4')
+    .row.col-lg-8.col-lg-offset-2.col-md-8.col-md-offset-2.col-xs-10.col-xs-offset-1#mainPage
+      .col-lg-3.col-md-3.col-sm-4.col-xs-12#wrapDivMain
+        #wrapDivMainInner
+          #signIn.socialBtn
+              p SIGN IN
+              .col-xs-4.col-sm-4 
+                a.btn.btn-block.login_btn-facebook(href='/auth/facebook', data-toggle='tooltip', data-placement='top', title='Facebook')
+                  i.fa.fa-facebook.fa-2x
+                  span.hidden-xs
+              .col-xs-4.col-sm-4
+                a.btn.btn-block.login_btn-twitter(href='/auth/twitter', data-toggle='tooltip', data-placement='top', title='Twitter')
+                  i.fa.fa-twitter.fa-2x
+                  span.hidden-xs
+              .col-xs-4.col-sm-4
+                a.btn.btn-block.login_btn-google-plus(href='/auth/google', data-toggle='tooltip', data-placement='top', title='Google Plus')
+                  i.fa.fa-google-plus.fa-2x
+                  span.hidden-xs                    
+              .col-xs-4.col-sm-4
+                a.btn.btn-block.login_btn-github(href='/auth/github', data-toggle='tooltip', data-placement='top', title='GitHub')
+                  i.fa.fa-github.fa-2x
+                  span.hidden-xs
+              .col-xs-4.col-sm-4
+                a.btn.btn-block.login_btn-steam(href='/auth/steam', data-toggle='tooltip', data-placement='top', title='Steam')
+                  i.fa.fa-steam.fa-2x
+                  span.hidden-xs
+              .col-xs-4.col-sm-4
+                a.btn.btn-block.login_btn-linkedin(href='/auth/linkedin', data-toggle='tooltip', data-placement='top', title='LinkedIn')
+                  i.fa.fa-linkedin.fa-2x
+                  span.hidden-xs
+          #guestPlay
+            p GUEST PLAY
+            | SINGLE
+            br
+            | PLAYER
+      .col-lg-6.col-md-6.col-sm-7.col-xs-12.mainComponent
+        #globalChat Test
+      .col-lg-3.col-md-3.hidden-sm.col-xs-12.mainComponent
+        #scoreBoard Score
