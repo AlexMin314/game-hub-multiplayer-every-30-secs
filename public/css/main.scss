@@ -25,6 +25,11 @@ p {
   font-size: 19px;
 }
 
+label, h3, h4 {
+  color: white;
+  font-weight: normal;
+}
+
 video {
   position: fixed;
   top: 50%;
@@ -44,7 +49,7 @@ video {
   background-size: cover;
 }
 /* Main Page */
-#mainContainer {
+#mainContainer, #accContainer {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -52,6 +57,10 @@ video {
   transform: translate(-50%, -50%);
   margin: 0;
   padding: 0;
+}
+
+#accContainer {
+  top: 42%;
 }
 
 #mainPage {
@@ -78,9 +87,12 @@ video {
   height: 100%;
   padding: 0;
 }
-/* main - sign in */
+/**
+ * main - sign in
+ * @type {[type]}
+ */
+
 #signIn {
-  height: 163px;
   margin-bottom: 6px;
   border: 3px solid rgb(255, 0, 153);
   padding-left: 5px;
@@ -89,18 +101,18 @@ video {
   -moz-transition: all 0.5s ease-in-out;
   -o-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
+  height: 164px;
 }
 
 #signIn p {
-  padding-top: 10px;
+  padding-top: 12px;
   margin-bottom: 0;
-  height: 38px;
+  height: 50px;
 }
 
 #signIn:hover {
   background-color: rgb(0, 222, 195);
   border: 3px solid white;
-
   a {
     color: rgb(87, 87, 87);
   };
@@ -151,6 +163,29 @@ video {
   background: #004269;
 }
 
+#signIn .dropdown img {
+  width: 25px;
+  height: 25px;
+  margin: -15px 15px -15px 10px;
+}
+
+#signIn .dropdown a {
+  float: left;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: auto;
+}
+
+#signIn .dropdown span {
+  font-size: 14px;
+}
+
+#signIn .dropdown {
+  margin: 5px 5px;
+  background-color: grey;
+}
+
+
 /**
  * Global Chat
  * @type {[type]}
@@ -162,11 +197,30 @@ video {
   border: 3px solid rgb(0, 224, 255);
 }
 
+#globalChat .chatInput {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/**
+ * Score Board
+ * @type {[type]}
+ */
+
 #scoreBoard {
   margin: 0 3px;
   height: 100%;
   border: 3px solid yellow;
 }
+
+/**
+ * Play modes
+ * @type {[type]}
+ */
 
 #guestPlay {
   text-align: center;
@@ -174,7 +228,7 @@ video {
   border: 3px solid white;
   padding-top: 11px;
   font-size: 30px;
-  height: 129px;
+  height: 130px;
   -webkit-transition: all 0.5s ease-in-out;
   -moz-transition: all 0.5s ease-in-out;
   -o-transition: all 0.5s ease-in-out;
@@ -184,8 +238,43 @@ video {
 #guestPlay:hover {
   background-color: rgb(210, 210, 210);
   color: rgb(87, 87, 87);
-  font-weight: bold;
 }
+
+#singlePlay, #multiPlay {
+  text-align: center;
+  padding-top: 8px;
+  font-size: 30px;
+  height: 94px;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+#multiPlay {
+  margin-bottom: 6px;
+  color: white;
+  border: 3px solid white;
+}
+#singlePlay {
+  margin-bottom: 6px;
+  color: white;
+  border: 3px solid white;
+}
+
+#multiPlay:hover {
+  background-color: rgb(255, 225, 25);
+  color: rgb(87, 87, 87);
+  border: 4px solid rgb(87, 87, 87);
+}
+
+#singlePlay:hover {
+  background-color: rgb(210, 210, 210);
+  color: rgb(87, 87, 87);
+  border: 4px solid rgb(87, 87, 87);
+}
+
+
 @media (max-width: 768px) {
   #mainContainer {
     top: 30%;

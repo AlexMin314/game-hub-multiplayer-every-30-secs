@@ -29,6 +29,13 @@ router.get('/twitter', passport.authenticate('twitter'));
 router.get('/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), (req, res) => {
   res.redirect(req.session.returnTo || '/');
 });
-
+router.get('/linkedin', passport.authenticate('linkedin', { state: 'SOME STATE' }));
+router.get('/linkedin/callback', passport.authenticate('linkedin', { failureRedirect: '/login' }), (req, res) => {
+  res.redirect(req.session.returnTo || '/');
+});
+router.get('/steam', passport.authorize('openid', { state: 'SOME STATE' }));
+router.get('/steam/callback', passport.authorize('openid', { failureRedirect: '/login' }), (req, res) => {
+  res.redirect(req.session.returnTo || '/');
+});
 
 module.exports = router;
