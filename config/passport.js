@@ -23,25 +23,6 @@ passport.deserializeUser((id, done) => {
 });
 
 /**
- * Sign in using Email and Password.
- */
-passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
-  User.findOne({ email: email.toLowerCase() }, (err, user) => {
-    if (err) { return done(err); }
-    if (!user) {
-      return done(null, false, { msg: `Email ${email} not found.` });
-    }
-    user.comparePassword(password, (err, isMatch) => {
-      if (err) { return done(err); }
-      if (isMatch) {
-        return done(null, user);
-      }
-      return done(null, false, { msg: 'Invalid email or password.' });
-    });
-  });
-}));
-
-/**
  * OAuth Strategy Overview
  *
  * - User is already logged in.
@@ -78,7 +59,6 @@ passport.use(new FacebookStrategy({
           user.facebook = profile.id;
           user.tokens.push({ kind: 'facebook', accessToken });
           user.profile.name = user.profile.name || `${profile.name.givenName} ${profile.name.familyName}`;
-          user.profile.gender = user.profile.gender || profile._json.gender;
           user.profile.picture = user.profile.picture || `https://graph.facebook.com/${profile.id}/picture?type=large`;
           user.save((err) => {
             req.flash('info', { msg: 'Facebook account has been linked.' });
@@ -104,7 +84,6 @@ passport.use(new FacebookStrategy({
           user.facebook = profile.id;
           user.tokens.push({ kind: 'facebook', accessToken });
           user.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
-          user.profile.gender = profile._json.gender;
           user.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
           user.profile.location = (profile._json.location) ? profile._json.location.name : '';
           user.save((err) => {
@@ -138,7 +117,6 @@ passport.use(new GitHubStrategy({
           user.profile.name = user.profile.name || profile.displayName;
           user.profile.picture = user.profile.picture || profile._json.avatar_url;
           user.profile.location = user.profile.location || profile._json.location;
-          user.profile.website = user.profile.website || profile._json.blog;
           user.save((err) => {
             req.flash('info', { msg: 'GitHub account has been linked.' });
             done(err, user);
@@ -165,7 +143,6 @@ passport.use(new GitHubStrategy({
           user.profile.name = profile.displayName;
           user.profile.picture = profile._json.avatar_url;
           user.profile.location = profile._json.location;
-          user.profile.website = profile._json.blog;
           user.save((err) => {
             done(err, user);
           });
@@ -249,7 +226,6 @@ passport.use(new GoogleStrategy({
           user.google = profile.id;
           user.tokens.push({ kind: 'google', accessToken });
           user.profile.name = user.profile.name || profile.displayName;
-          user.profile.gender = user.profile.gender || profile._json.gender;
           user.profile.picture = user.profile.picture || profile._json.image.url;
           user.save((err) => {
             req.flash('info', { msg: 'Google account has been linked.' });
@@ -275,7 +251,6 @@ passport.use(new GoogleStrategy({
           user.google = profile.id;
           user.tokens.push({ kind: 'google', accessToken });
           user.profile.name = profile.displayName;
-          user.profile.gender = profile._json.gender;
           user.profile.picture = profile._json.image.url;
           user.save((err) => {
             done(err, user);
@@ -310,7 +285,6 @@ passport.use(new LinkedInStrategy({
           user.profile.name = user.profile.name || profile.displayName;
           user.profile.location = user.profile.location || profile._json.location.name;
           user.profile.picture = user.profile.picture || profile._json.pictureUrl;
-          user.profile.website = user.profile.website || profile._json.publicProfileUrl;
           user.save((err) => {
             if (err) { return done(err); }
             req.flash('info', { msg: 'LinkedIn account has been linked.' });
@@ -338,7 +312,6 @@ passport.use(new LinkedInStrategy({
           user.profile.name = profile.displayName;
           user.profile.location = profile._json.location.name;
           user.profile.picture = profile._json.pictureUrl;
-          user.profile.website = profile._json.publicProfileUrl;
           user.save((err) => {
             done(err, user);
           });

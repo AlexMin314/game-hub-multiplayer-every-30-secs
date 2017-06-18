@@ -19,6 +19,13 @@ const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const fs = require('fs');
+const passportSocketIo = require('passport.socketio');
+const cookieParser = require('cookie-parser');
+const RedisStore = require('connect-redis')(session);
+const redisUrl = require('redis-url');
+// const sessionStore = require('sessionstore');
+//
+
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -28,20 +35,12 @@ dotenv.load({ path: '.env.example' });
 /**
  * Create Express server.
  */
- // keys
- // const key = fs.readFileSync('./keys/realtimemaps-key.pem');  // fs = file system
- // const cert = fs.readFileSync('./keys/realtimemaps-cert.pem');  // fs = file system
- //
- // const option = {
- //   key: key,
- //   cert: cert
- // };
-
 const app = express();
 
 const server = require('http').Server(app);
-// const server = require('https').Server(option, app);
 const io = require('socket.io')(server);
+
+
 
 /**
  * Connect to MongoDB.
@@ -53,6 +52,14 @@ mongoose.connection.on('error', (err) => {
   console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
   process.exit();
 });
+
+const sessionStore = new MongoStore({
+  url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
+  autoReconnect: true,
+  clear_interval: 3600
+});
+//var sessionStore = new RedisStore({ client: redisUrl.connect(process.env.REDIS_URL) });
+
 
 /**
  * Express configuration.
@@ -71,26 +78,48 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
+app.use(cookieParser());
+/**
+ * Session configuration.
+ */
 app.use(session({
+  //key: 'connect.sid',
   resave: true,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
-  store: new MongoStore({
-    url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
-    autoReconnect: true,
-    clear_interval: 3600
-  })
+  store: sessionStore,
+  cookieParser: cookieParser
 }));
+io.use(passportSocketIo.authorize({
+  cookieParser: cookieParser,
+  //key: 'connect.sid',
+  secret: process.env.SESSION_SECRET,
+  store: sessionStore,
+  //passport: passport,
+  success: onAuthorizeSuccess,
+  fail: onAuthorizeFail
+}));
+
+function onAuthorizeFail(d, m, e, accept) {
+  console.log('Connection Failed to socket.io ', e, m);
+  accept(null, false);
+}
+function onAuthorizeSuccess(d, accept) {
+  console.log('successful connection to socket.io');
+  accept(null, true);
+}
+
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use(flash());
-// app.use((req, res, next) => {
-//   if (req.path === '/api/upload') {
-//     next();
-//   } else {
-//     lusca.csrf()(req, res, next);
-//   }
-// });
+app.use((req, res, next) => {
+  if (req.path === '/api/upload') {
+    next();
+  } else {
+    lusca.csrf()(req, res, next);
+  }
+});
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
@@ -100,13 +129,13 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   // After successful login, redirect back to the intended page
   if (!req.user &&
-      req.path !== '/login' &&
-      req.path !== '/signup' &&
-      !req.path.match(/^\/auth/) &&
-      !req.path.match(/\./)) {
+    req.path !== '/login' &&
+    req.path !== '/signup' &&
+    !req.path.match(/^\/auth/) &&
+    !req.path.match(/\./)) {
     req.session.returnTo = req.path;
   } else if (req.user &&
-      req.path == '/account') {
+    req.path == '/account') {
     req.session.returnTo = req.path;
   }
   next();
@@ -121,21 +150,23 @@ app.use(errorHandler());
 /**
  * Router
  */
+const socketIO = require('./routes/websockets')(io);
+
 const indexRoute = require('./routes/index');
 const authRoute = require('./routes/auth');
 const accountRoute = require('./routes/account');
-const socketIO = require('./routes/websockets')(io);
 const gameRoute = require('./routes/game');
 app.use('/', indexRoute);
 app.use('/auth', authRoute);
 app.use('/account', accountRoute);
 app.use('/', gameRoute);
 
+
 /**
  * Start Express server.
  */
-app.listen(app.get('port'), () => {
+server.listen(app.get('port'), () => {
   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env')); 
-  console.log('  Press CTRL-C to stop\n');
 });
+
 module.exports = app;

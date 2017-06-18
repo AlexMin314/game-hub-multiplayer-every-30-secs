@@ -29,6 +29,7 @@ block content
         .form-group
           p.col-sm-offset-3.col-sm-6 This action is irreversible.
           .col-sm-offset-3.col-sm-4
+            input(type='hidden', name='_csrf', value=_csrf)
             button.btn.btn-danger(type='submit', name='delete')
               i.fa.fa-trash
               |  Delete my account
