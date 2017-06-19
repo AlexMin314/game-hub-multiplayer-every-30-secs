@@ -1,10 +1,8 @@
 extends layout
 
 block content
-  .container-fluid#mainContainer
-    //- video(muted='', loop='')
-    //-   source(src='./src/test1.mp4', type='video/mp4')
-    .col-lg-6.col-lg-offset-3.col-md-8.col-md-offset-2.col-sm-10.col-sm-offset-1.col-xs-10.col-xs-offset-1#mainPage
+  .container#mainContainer
+    .col-lg-8.col-lg-offset-2.col-md-10.col-md-offset-1.col-sm-10.col-sm-offset-1.col-xs-10.col-xs-offset-1#mainPage
       .col-lg-3.col-md-3.col-sm-3.col-xs-12#wrapDivMain
         #wrapDivMainInner
           if !user          
@@ -64,8 +62,6 @@ block content
       .col-lg-6.col-md-6.col-sm-6.col-xs-12.mainComponent
         #globalChat
           #globalChatInnerWrapper
-          //- #globalChatId.col-md-2 test
-          //- #globalChatText.col-md-10 test2
           if user            
             .input-group.chatInput
               input.form-control#globalChatVal(type='text', placeholder='Chat here...')
@@ -74,4 +70,5 @@ block content
 
       .col-lg-3.col-md-3.col-sm-3.col-xs-12.mainComponent
         #scoreBoard
+          #boardInnerWrapper
               

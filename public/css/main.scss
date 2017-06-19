@@ -210,7 +210,7 @@ video {
   -webkit-transition: all 0.5s ease-in-out;
   -moz-transition: all 0.5s ease-in-out;
   -o-transition: all 0.5s ease-in-out;
-  transition: all 0.5s ease-in-out;  
+  transition: all 0.5s ease-in-out;
 }
 
 #globalChatInnerWrapper {
@@ -242,20 +242,79 @@ video {
   border-bottom: 2px solid rgb(51, 51, 51);
   border-right: 1px solid rgb(51, 51, 51);
 }
+
 .chatText:hover {
   background-color: rgba(57, 57, 57, 0.78);
+  .chatTextId {
+    background-color: rgba(0, 224, 255, 0.59);
+  }
+}
+
+.chatTextId {
+  font-size: 18px;
+  background-color: rgba(143, 219, 230, 0.43);
 }
 
 /**
- * Score Board
+ * Score Board + User List
  * @type {[type]}
  */
 
 #scoreBoard {
   margin: 0 3px;
   height: 100%;
-  border: 3px solid yellow;
+  border: 3px solid white;
 }
+
+#scoreBoard:hover {
+  border: 3px solid yellow;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+#boardInnerWrapper {
+  margin-top: 5px;
+  height: 97%;
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-style: none;
+  font-weight: lighter;
+}
+#boardInnerWrapper::-webkit-scrollbar {
+  display: none;
+}
+.newUser {
+  height: 40px;
+  background-color: rgba(198, 198, 198, 0.41);
+  text-align: left;
+  padding-left: 15px;
+  padding-top: 10px;
+  margin: 2px 0;
+  word-break: break-all;
+}
+
+.newUser:hover {
+  border-top: 1px solid yellow;
+  border-bottom: 1px solid yellow;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+.newUser img {
+  margin-top: -7px;
+  width: 30px;
+  height: 30px;
+}
+
+.newUser span {
+  padding-left: 10px;
+  font-size: 18px;
+}
+
 @media (max-width: 768px) {
   #mainContainer {
     top: 30%;
