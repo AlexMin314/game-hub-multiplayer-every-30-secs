@@ -13,10 +13,10 @@ const gameController = require('../controllers/game');
 
 
 router.get('/single', gameController.singleMain); // for guest
-router.get('/:singlep', gameController.singleMainLogin); // for login user
-router.get('/:multip', gameController.multiplay); // for login user
-router.get('/:room', gameController.room); // game lounge
-router.get('/game/get/rank', gameController.rank);
+router.get('/room/:room', gameController.room); // game lounge
+router.get('/singlep/:room', gameController.singleMainLogin); // for login user
+router.get('/multip/:room', gameController.multiplay); // for login user
+router.get('/game/rank', gameController.rank);
 router.get('/game/get/score', gameController.getScore);
 router.post('/game/post/score/:name/:score', gameController.postScore);
 

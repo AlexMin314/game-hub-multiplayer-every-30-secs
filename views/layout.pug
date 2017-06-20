@@ -8,14 +8,14 @@ html
     meta(name='csrf-token', content=_csrf)
     title Every 30 Secs
     link(rel='shortcut icon', href='/favicon.png')
-    link(rel='stylesheet', href='./css/libs/bootstrap.min.css')
-    link(rel='stylesheet', href='./css/libs/font-awesome.min.css')      
-    link(rel='stylesheet', href='/css/game.css')
-    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', type='text/css', href='/css/libs/bootstrap.min.css')
+    link(rel='stylesheet', type='text/css', href='/css/libs/font-awesome.min.css')      
+    link(rel='stylesheet', type='text/css', href='/css/game.css')
+    link(rel='stylesheet', type='text/css', href='/css/main.css')
 
   body
     video(muted='', loop='')
-      source(src='./src/test1.mp4', type='video/mp4')
+      source(src='/src/test1.mp4', type='video/mp4')
     .container
       include partials/flash
     block content

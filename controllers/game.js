@@ -3,31 +3,28 @@ exports.singleMain = (req, res) => {
   });
 };
 
-exports.singleMainLogin = (req, res) => {
-  res.render('/', {
-  });
-};
-exports.multiplay = (req, res) => {
-  res.render('/', {
-  });
-};
-
 exports.room = (req, res) => {
   res.render('game/room', {
   });
 };
 
+
+exports.singleMainLogin = (req, res) => {
+
+};
+exports.multiplay = (req, res) => {
+
+};
+
 exports.rank = (req, res) => {
-  res.render('/', {
+  res.render('home', {
   });
 };
 
 exports.getScore = (req, res) => {
-  res.render('/', {
-  });
+
 };
 
 exports.postScore = (req, res) => {
-  res.render('/', {
-  });
+
 };

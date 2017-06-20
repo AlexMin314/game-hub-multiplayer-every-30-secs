@@ -54,6 +54,9 @@ module.exports = (io) => {
 
     socket.on('invitation', (userid) => {
       users.forEach((e) => {
+        if (e.socketId === socket.id) {
+          e.status = 'busy';
+        }
         if (e.id === userid && e.socketId !== socket.id) {
           if (e.status === 'idle') {
             let roomNum = userid.slice(0, 5) + Math.floor(Math.random() * 100 + 100);
@@ -78,8 +81,10 @@ module.exports = (io) => {
 
     socket.on('invitation declined', (host) => {
       users.forEach((e) => {
+        if (e.socketId === host) e.status = 'idle';
         if (e.socketId === socket.id) {
           e.status = 'idle';
+          io.to(host).emit('error message', 'decline');
         }
       })
 

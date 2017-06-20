@@ -114,6 +114,8 @@
     inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnD'><p>DECLINE</p></div>";
     gloChatInWrap.appendChild(inviteWindowDiv);
 
+    multiPlayer.removeEventListener('click', multiBtnEvent);
+
     document.getElementById('inviteBtnC').addEventListener('click', (e) => {
       let player1;
       let player2;
@@ -123,17 +125,20 @@
         if (e.socketId === socket.id) player2 = e;
       })
       socket.emit('Current GameRoom', player1, player2, roomNum);
-      location.href = '/room' + roomNum;
+      location.href = '/room/' + roomNum;
     });
     document.getElementById('inviteBtnD').addEventListener('click', (e) => {
       const inviteWindow = document.getElementById('inviteWindow');
       gloChatInWrap.removeChild(inviteWindow);
+      if (multiPlayer) {
+        multiPlayer.addEventListener('click', multiBtnEvent);
+      }
       socket.emit('invitation declined', host);
     })
   });
 
   socket.on('Enter Room', (roomNum) => {
-    location.href = '/room' + roomNum;
+    location.href = '/room/' + roomNum;
   })
 
 
@@ -269,13 +274,14 @@
 
   const multiPlayer = document.getElementById('multiPlay');
 
+  function multiBtnEvent(e) {
+    matchMenuSwap(multiButtonChk);
+    multiButtonChk = !multiButtonChk;
+  }
 
 
   if (multiPlayer) {
-    multiPlayer.addEventListener('click', (e) => {
-      matchMenuSwap(multiButtonChk);
-      multiButtonChk = !multiButtonChk;
-    });
+    multiPlayer.addEventListener('click', multiBtnEvent);
   }
 
   const charInput = document.getElementsByClassName('chatInput')[0];
