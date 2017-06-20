@@ -4,17 +4,23 @@
   const socket = io.connect('/', { secure: true, transports: ['websocket'] });
 
 
+  socket.on('inviteRoom', function (data) {
+    location.href = '/room';
+  });
+
+
   /**
    * [broadcast message]
    */
 
+  const gloChatInWrap = document.getElementById('globalChatInnerWrapper');
   socket.on('broadcast message', function (data, username) {
     //console.log(socket.userName);
     let msg = document.createElement('div');
     msg.innerHTML = '<span class="chatTextId">' + username + '</span> :  ' + data;
     msg.className = 'chatText';
-    document.getElementById('globalChatInnerWrapper').appendChild(msg);
-    document.getElementById('globalChatInnerWrapper').scrollTop = 1000;
+    gloChatInWrap.appendChild(msg);
+    gloChatInWrap.scrollTop = 1000;
   });
 
   const sendBtn = document.getElementById('globalSendBtn');
@@ -42,36 +48,139 @@
    * User List
    */
   const scoreBoardEle = document.getElementById('boardInnerWrapper');
-  socket.on('update user', (users) => {
-    scoreBoardEle.innerHTML = '';
+  if (scoreBoardEle) {
+    socket.on('update user', (users) => {
+      scoreBoardEle.innerHTML = '';
 
-    users.forEach((e) => {
-      console.log('leaderboard :', e.name);
-      let newUserDiv = document.createElement('div');
-      newUserDiv.className = 'newUser';
-      newUserDiv.id = e.id;
-      scoreBoardEle.appendChild(newUserDiv);
-      let theNewUserDiv = document.getElementById(e.id);
-      let newUserPicDiv = document.createElement('img');
-      newUserPicDiv.setAttribute('src', e.picture);
-      theNewUserDiv.appendChild(newUserPicDiv);
-      let newUserNameDiv = document.createElement('span');
-      newUserNameDiv.innerHTML = e.name;
-      theNewUserDiv.appendChild(newUserNameDiv);
+      users.forEach((e) => {
+        let newUserDiv = document.createElement('div');
+        newUserDiv.className = 'newUser';
+        newUserDiv.id = e.id;
+        scoreBoardEle.appendChild(newUserDiv);
+        let theNewUserDiv = document.getElementById(e.id);
+        /////
+        theNewUserDiv.addEventListener('click', (event) => {
+          socket.emit('invitation', e.id);
+        });
+
+        if (e.picture) {
+          let newUserPicDiv = document.createElement('img');
+          newUserPicDiv.setAttribute('src', e.picture);
+          theNewUserDiv.appendChild(newUserPicDiv);
+        }
+        let newUserNameDiv = document.createElement('span');
+        newUserNameDiv.innerHTML = e.name;
+        theNewUserDiv.appendChild(newUserNameDiv);
+      });
     });
-  });
-
-
+  }
 
 
   /**
-   * [guestPlay description]
-   * @type {[type]}
+   * game related
+   */
+
+  /**
+   * guestPlay (Single Only)
    */
   const guestPlay = document.getElementById('guestPlay');
   if (guestPlay) {
-    guestPlay.addEventListener('click', function (e) {
+    guestPlay.addEventListener('click', (e) => {
       location.href = './single';
     });
   }
+
+
+
+  const singlePlayer = document.getElementById('singlePlay');
+  if (singlePlayer) {
+    singlePlayer.addEventListener('click', (e) => {
+      console.log('single play!!!');
+      location.href = './single'
+      // need login cheker
+    });
+  }
+
+  const multiPlayer = document.getElementById('multiPlay');
+  let multiButtonChk = true;
+
+  const gloalChat = document.getElementById('globalChat');
+  if (multiPlayer) {
+    multiPlayer.addEventListener('click', (e) => {
+      matchMenuSwap(multiButtonChk);
+      multiButtonChk = !multiButtonChk;
+
+
+    });
+  }
+
+  const charInput = document.getElementsByClassName('chatInput')[0];
+
+  function matchMenuSwap(chk) {
+    if (chk) {
+      gloChatInWrap.style.display = 'none';
+      charInput.style.display = 'none';
+      let matchMenuDiv = document.createElement('div');
+      matchMenuDiv.id = 'matchMenu';
+      matchMenuDiv.className = 'container';
+      gloalChat.appendChild(matchMenuDiv);
+      marchMenu();
+    } else {
+      gloChatInWrap.style.display = 'block';
+      charInput.style.display = 'table';
+      let matchMenuEle = document.getElementById('matchMenu');
+      gloalChat.removeChild(matchMenuEle);
+    }
+  }
+  let matchtpl = document.getElementById('matchMenuTpl')
+  if (matchtpl) matchtpl = matchtpl.innerHTML;
+  const matchtplDiv = document.createElement('div');
+  matchtplDiv.innerHTML = matchtpl;
+
+  function marchMenu() {
+    let matchMenuEle = document.getElementById('matchMenu');
+    matchMenuEle.appendChild(matchtplDiv);
+
+    let vsModeEle = document.getElementById('vsMode');
+    let coopModeEle = document.getElementById('coopMode');
+    vsModeEle.addEventListener('click', (e) => {
+      console.log('1VS1 mode on');
+      vsModeEle.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+      coopModeEle.style.backgroundColor = 'rgba(255, 255, 255, 0)';
+      document.getElementById('descriptMode').style.display = 'none';
+      document.getElementById('descriptUser').style.display = 'block';
+
+    });
+    coopModeEle.addEventListener('click', (e) => {
+      console.log('Coop Mode on');
+      vsModeEle.style.backgroundColor = 'rgba(255, 255, 255, 0)';
+      coopModeEle.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+      document.getElementById('descriptMode').style.display = 'none';
+      document.getElementById('descriptUser').style.display = 'block';
+    })
+  }
+
+  /**
+   * Room
+   */
+  const ready1 = document.getElementById('player1ReadyBtn');
+  const ready2 = document.getElementById('player2ReadyBtn');
+  let gamechk1 = false;
+  let gamechk2 = false;
+  if (ready1) {
+    ready1.addEventListener('click', (e) => {
+      gamechk1 = true;
+      ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+      ready1.style.paddingTop = '35px';
+      ready1.innerHTML = 'GAME<br>READY';
+    });
+    ready2.addEventListener('click', (e) => {
+      gamechk2 = true;
+      ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+      ready2.style.paddingTop = '35px';
+      ready2.innerHTML = 'GAME<br>READY';
+    });
+  }
+
+
 }());

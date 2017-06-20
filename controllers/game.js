@@ -1,5 +1,9 @@
 exports.singleMain = (req, res) => {
   res.render('game/single', {
-    title: 'single game'
+  });
+};
+
+exports.room = (req, res) => {
+  res.render('game/room', {
   });
 };

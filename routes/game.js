@@ -13,5 +13,6 @@ const gameController = require('../controllers/game');
 
 
 router.get('/single', gameController.singleMain);
+router.get('/:room', gameController.room)
 
 module.exports = router;

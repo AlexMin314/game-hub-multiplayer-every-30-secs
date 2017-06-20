@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
   profile: {
     name: String,
     location: String,
-    picture: String
+    picture: String,
+    usersIdx: Number
   }
 }, { timestamps: true });
 

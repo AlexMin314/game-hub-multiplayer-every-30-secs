@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+  .container#mainContainer
+    .col-lg-8.col-lg-offset-2.col-md-10.col-md-offset-1.col-sm-10.col-sm-offset-1.col-xs-10.col-xs-offset-1#mainPage
+      .col-lg-3.col-md-3.col-sm-3.col-xs-12#wrapDivMain
+        #player1Info
+          p Player 1
+        #player1ReadyBtn 
+          p PRESS
+          | READY FOR
+          br
+          | GAME START
+          
+
+      .col-lg-6.col-md-6.col-sm-6.col-xs-12.mainComponent
+        #globalChat
+          #globalChatInnerWrapper
+          if user
+            .input-group.chatInput
+              input.form-control#globalChatVal(type='text', placeholder='Chat here...')
+              span.input-group-btn
+                button.btn.btn-default#globalSendBtn(type='button') Send
+
+      .col-lg-3.col-md-3.col-sm-3.col-xs-12.mainComponent
+        #player2Info
+          p Player 2
+        #player2ReadyBtn
+          p PRESS
+          | READY FOR
+          br
+          | GAME START

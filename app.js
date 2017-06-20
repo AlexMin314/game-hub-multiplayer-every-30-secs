@@ -21,8 +21,8 @@ const sass = require('node-sass-middleware');
 const fs = require('fs');
 const passportSocketIo = require('passport.socketio');
 const cookieParser = require('cookie-parser');
-const RedisStore = require('connect-redis')(session);
-const redisUrl = require('redis-url');
+//const RedisStore = require('connect-redis')(session);
+//const redisUrl = require('redis-url');
 // const sessionStore = require('sessionstore');
 //
 
