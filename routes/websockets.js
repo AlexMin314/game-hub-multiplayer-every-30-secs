@@ -8,7 +8,6 @@ module.exports = (io) => {
   io.on('connection', (socket) => {
     console.log('==User connected: ', socket.id);
     let user = {};
-    user.gameReady = false;
 
     // reassign socket value with passport data.
     if (socket.request.user.logged_in) {
@@ -30,6 +29,13 @@ module.exports = (io) => {
       user.picture = null;
       users.push(user);
     }
+
+    // game room socket id update.
+    curGameRoom.forEach((e) => {
+      if (e.player1.id === user.id) e.player1.socketId = socket.id;
+      if (e.player2.id === user.id) e.player2.socketId = socket.id;
+    })
+
     updateUserList();
 
     socket.on('join room', (data) => {
@@ -98,8 +104,12 @@ module.exports = (io) => {
       }
     });
 
-    socket.on('game ready', () => {
-      console.log('>>>>>>>>>>>>>>>> BTN clicked');
+    socket.on('game readyBtn', (who, data) => {
+      io.to(data.room).emit('readyBtn', who, data);
+    });
+
+    socket.on('ready checker', (data) => {
+      io.to(data.room).emit('multi start');
     });
 
 

@@ -6,11 +6,20 @@
   const gloalChat = document.getElementById('globalChat');
   let multiButtonChk = true;
   let matchMenuEle;
+  let player1 = false;
+  let player2 = false;
+  let ready1;
+  let ready2;
+  let gamechk1 = false;
+  let gamechk2 = false;
 
   socket.emit('join room', location.href);
   socket.emit('join gameRoom', location.href);
 
+
   socket.on('Matchroom display', (data) => {
+    if (data.player1.socketId === socket.id) player1 = true;
+    if (data.player2.socketId === socket.id) player2 = true;
     // player1Info
     const player1Info = document.getElementById('player1Info');
     const player2Info = document.getElementById('player2Info');
@@ -51,7 +60,51 @@
     player2NameDiv.innerHTML = data.player1.name;
     player2InfoWrap.appendChild(player2NameDiv);
 
+
+    ready1 = document.getElementById('player1ReadyBtn');
+    ready2 = document.getElementById('player2ReadyBtn');
+
+    if (ready1) {
+      if (player1) {
+        ready1.addEventListener('click', (e) => {
+          gamechk1 = true;
+          ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+          ready1.style.paddingTop = '45px';
+          ready1.innerHTML = 'GAME<br>READY';
+          socket.emit('game readyBtn', 'player1', data);
+        });
+      }
+      if (player2) {
+        ready2.addEventListener('click', (e) => {
+          gamechk2 = true;
+          ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+          ready2.style.paddingTop = '45px';
+          ready2.innerHTML = 'GAME<br>READY';
+          socket.emit('game readyBtn', 'player2', data);
+        });
+      }
+    }
   });
+
+  socket.on('readyBtn', (who, data) => {
+    if (who === 'player1' && player2 === true) {
+      gamechk1 = true;
+      ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+      ready1.style.paddingTop = '45px';
+      ready1.innerHTML = 'GAME<br>READY';
+      if (gamechk1 === true && gamechk2 === true) socket.emit('ready checker', data);
+    }
+    if (who === 'player2' && player1 === true) {
+      gamechk2 = true;
+      ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+      ready2.style.paddingTop = '45px';
+      ready2.innerHTML = 'GAME<br>READY';
+      if (gamechk1 === true && gamechk2 === true) socket.emit('ready checker', data);
+    }
+  });
+
+
+
 
   socket.on('inviteRoom', function (roomNum, host, users) {
     const inviteWindowDiv = document.createElement('div');
@@ -95,6 +148,7 @@
     gloChatInWrap.appendChild(msg);
     gloChatInWrap.scrollTop = 1000;
   });
+
   socket.on('error message', function (data) {
     //console.log(socket.userName);
     if (data === 'busy') {
@@ -221,8 +275,6 @@
     multiPlayer.addEventListener('click', (e) => {
       matchMenuSwap(multiButtonChk);
       multiButtonChk = !multiButtonChk;
-
-
     });
   }
 
@@ -276,24 +328,36 @@
   /**
    * Room
    */
-  const ready1 = document.getElementById('player1ReadyBtn');
-  const ready2 = document.getElementById('player2ReadyBtn');
-  let gamechk1 = false;
-  let gamechk2 = false;
-  if (ready1) {
-    ready1.addEventListener('click', (e) => {
-      gamechk1 = true;
-      ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-      ready1.style.paddingTop = '45px';
-      ready1.innerHTML = 'GAME<br>READY';
-    });
-    ready2.addEventListener('click', (e) => {
-      gamechk2 = true;
-      ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-      ready2.style.paddingTop = '45px';
-      ready2.innerHTML = 'GAME<br>READY';
-    });
-  }
 
+  socket.on('multi start', () => {
+    setTimeout(() => {
+      let msg = document.createElement('div');
+      msg.innerHTML = 'Game Start ... 3';
+      msg.className = 'startText';
+      gloChatInWrap.appendChild(msg);
+      gloChatInWrap.scrollTop = 1000;
+    }, 1000);
+    setTimeout(() => {
+      let msg = document.createElement('div');
+      msg.innerHTML = 'Game Start ...... 2';
+      msg.className = 'startText';
+      gloChatInWrap.appendChild(msg);
+      gloChatInWrap.scrollTop = 1000;
+    }, 2000);
+    setTimeout(() => {
+      let msg = document.createElement('div');
+      msg.innerHTML = 'Game Start ......... 1';
+      msg.className = 'startText';
+      gloChatInWrap.appendChild(msg);
+      gloChatInWrap.scrollTop = 1000;
+    }, 3000);
+    setTimeout(() => {
+      let msg = document.createElement('div');
+      msg.innerHTML = 'Game Start ......... GG';
+      msg.className = 'startText';
+      gloChatInWrap.appendChild(msg);
+      gloChatInWrap.scrollTop = 1000;
+    }, 4000);
+  });
 
 }());
