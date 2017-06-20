@@ -8,8 +8,52 @@
   let matchMenuEle;
 
   socket.emit('join room', location.href);
+  socket.emit('join gameRoom', location.href);
 
-  socket.on('inviteRoom', function (roomNum, host) {
+  socket.on('Matchroom display', (data) => {
+    // player1Info
+    const player1Info = document.getElementById('player1Info');
+    const player2Info = document.getElementById('player2Info');
+
+    const player1InfoDiv = document.createElement('div');
+    player1InfoDiv.id = 'player1InfoWrap';
+    player1InfoDiv.className = 'playersInfo';
+    player1Info.appendChild(player1InfoDiv);
+
+    const player1InfoWrap = document.getElementById('player1InfoWrap');
+
+    const player1Img = document.createElement('img');
+    player1Img.className = 'playersImg';
+    player1Img.src = data.player1.picture;
+    player1InfoWrap.appendChild(player1Img);
+
+    const player1NameDiv = document.createElement('div');
+    player1NameDiv.className = 'playersName';
+    player1NameDiv.innerHTML = data.player1.name;
+    player1InfoWrap.appendChild(player1NameDiv);
+
+
+
+    const player2InfoDiv = document.createElement('div');
+    player2InfoDiv.id = 'player2InfoWrap';
+    player2InfoDiv.className = 'playersInfo';
+    player2Info.appendChild(player2InfoDiv);
+
+    const player2InfoWrap = document.getElementById('player2InfoWrap');
+
+    const player2Img = document.createElement('img');
+    player2Img.className = 'playersImg';
+    player2Img.src = data.player2.picture;
+    player2InfoWrap.appendChild(player2Img);
+
+    const player2NameDiv = document.createElement('div');
+    player2NameDiv.className = 'playersName';
+    player2NameDiv.innerHTML = data.player1.name;
+    player2InfoWrap.appendChild(player2NameDiv);
+
+  });
+
+  socket.on('inviteRoom', function (roomNum, host, users) {
     const inviteWindowDiv = document.createElement('div');
     inviteWindowDiv.id = 'inviteWindow';
     inviteWindowDiv.innerHTML = "<div class='col-xs-12'>You've got a<br>Match Invitation</div>";
@@ -18,12 +62,20 @@
     gloChatInWrap.appendChild(inviteWindowDiv);
 
     document.getElementById('inviteBtnC').addEventListener('click', (e) => {
+      let player1;
+      let player2;
       socket.emit('invitation confirmed', roomNum, host);
+      users.forEach((e) => {
+        if (e.socketId === host) player1 = e;
+        if (e.socketId === socket.id) player2 = e;
+      })
+      socket.emit('Current GameRoom', player1, player2, roomNum);
       location.href = '/room' + roomNum;
     });
     document.getElementById('inviteBtnD').addEventListener('click', (e) => {
       const inviteWindow = document.getElementById('inviteWindow');
       gloChatInWrap.removeChild(inviteWindow);
+      socket.emit('invitation declined', host);
     })
   });
 
@@ -48,6 +100,27 @@
     if (data === 'busy') {
       let msg = document.createElement('div');
       msg.innerHTML = 'The Player busy now, try later.';
+      msg.className = 'errorText';
+      gloChatInWrap.appendChild(msg);
+      gloChatInWrap.scrollTop = 1000;
+    }
+    if (data === 'wait') {
+      let msg = document.createElement('div');
+      msg.innerHTML = 'Invitaion Sent.';
+      msg.className = 'errorText';
+      gloChatInWrap.appendChild(msg);
+      gloChatInWrap.scrollTop = 1000;
+    }
+    if (data === 'decline') {
+      let msg = document.createElement('div');
+      msg.innerHTML = 'The Player declined your invitation';
+      msg.className = 'errorText';
+      gloChatInWrap.appendChild(msg);
+      gloChatInWrap.scrollTop = 1000;
+    }
+    if (data === 'guest') {
+      let msg = document.createElement('div');
+      msg.innerHTML = 'Can not play multiplayer with guests.';
       msg.className = 'errorText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;

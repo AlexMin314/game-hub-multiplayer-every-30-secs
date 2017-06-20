@@ -300,7 +300,7 @@ video {
   background-color: rgba(198, 198, 198, 0.41);
   text-align: left;
   padding-left: 15px;
-  padding-top: 10px;
+  padding-top: 12px;
   margin: 2px 0;
   word-break: break-all;
 }
@@ -321,8 +321,8 @@ video {
 }
 
 .newUser span {
-  padding-left: 10px;
-  font-size: 18px;
+  padding-left: 5px;
+  font-size: 15px;
 }
 
 @media (max-width: 768px) {
@@ -512,4 +512,13 @@ video {
   -moz-transition: all 0.5s ease-in-out;
   -o-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
+}
+
+.playersImg {
+  width: 50px;
+  height: 50px;
+}
+.playersName {
+  margin-top: 10px;
+  font-size: 18px;
 }

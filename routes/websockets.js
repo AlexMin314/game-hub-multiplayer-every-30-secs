@@ -2,6 +2,7 @@
 
 module.exports = (io) => {
   const users = [];
+  const curGameRoom = [];
   let room = '';
 
   io.on('connection', (socket) => {
@@ -14,6 +15,7 @@ module.exports = (io) => {
       socket.userName = socket.request.user.profile.name;
       //socket.userId = socket.request.user.id;
       user.name = socket.userName;
+      user.guest = false;
       user.id = socket.request.user.id;
       user.socketId = socket.id;
       user.status = 'idle';
@@ -22,18 +24,20 @@ module.exports = (io) => {
     } else {
       // Guest
       user.name = 'GUEST ' + socket.id.slice(0, 5);
+      user.guest = true;
       user.id = socket.id;
-      user.status = 'idle';
+      user.status = 'guest';
       user.picture = null;
       users.push(user);
     }
     updateUserList();
 
     socket.on('join room', (data) => {
-      room = data.substr(-9);
+      room = data.substr(-8);
       if (/\//.test(room)) {
         room = 'global';
         user.status = 'idle'
+        if (user.guest) user.status = 'guest';
       } else {
         user.status = 'busy';
       }
@@ -45,13 +49,18 @@ module.exports = (io) => {
     socket.on('invitation', (userid) => {
       users.forEach((e) => {
         if (e.id === userid && e.socketId !== socket.id) {
-          console.log(e.status);
           if (e.status === 'idle') {
-            let roomNum = userid.slice(0, 5);
-            e.status = 'busy';
-            io.to(e.socketId).emit('inviteRoom', roomNum, socket.id);
+            let roomNum = userid.slice(0, 5) + Math.floor(Math.random() * 100 + 100);
+            e.status = 'wait';
+            io.to(socket.id).emit('error message', 'wait');
+            return io.to(e.socketId).emit('inviteRoom', roomNum, socket.id, users);
           }
-          if (e.status === 'busy') io.to(socket.id).emit('error message', 'busy');
+          if (e.status === 'busy' || e.status === 'wait') {
+            io.to(socket.id).emit('error message', 'busy');
+          }
+          if (e.status === 'guest') {
+            io.to(socket.id).emit('error message', 'guest');
+          }
         }
       });
     });
@@ -61,6 +70,40 @@ module.exports = (io) => {
       io.to(host).emit('Enter Room', roomNum, host);
     });
 
+    socket.on('invitation declined', (host) => {
+      users.forEach((e) => {
+        if (e.socketId === socket.id) {
+          e.status = 'idle';
+        }
+      })
+
+    });
+
+    socket.on('Current GameRoom', (player1, player2, room) => {
+      let curGame = {};
+      curGame.player1 = player1;
+      curGame.player2 = player2;
+      curGame.room = room;
+      curGameRoom.push(curGame);
+    });
+
+    socket.on('join gameRoom', (data) => {
+      let gameRoom = data.substr(-8);
+      let curGameInfo;
+      curGameRoom.forEach((e) => {
+        if (e.room === gameRoom) curGameInfo = e;
+      });
+      if (curGameInfo) {
+        io.to(socket.id).emit('Matchroom display', curGameInfo);
+      }
+    });
+
+    socket.on('game ready', () => {
+      console.log('>>>>>>>>>>>>>>>> BTN clicked');
+    });
+
+
+
     socket.on('disconnect', (socket) => {
       console.log('==User disconnect: ', user.name);
       users.forEach((e, i) => {
@@ -68,7 +111,6 @@ module.exports = (io) => {
           users.splice(i, 1);
         }
       });
-      console.log('==now user list is : ', users);
       updateUserList();
     });
 
