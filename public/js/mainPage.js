@@ -3,6 +3,9 @@
 
   const socket = io.connect('/', { secure: true, transports: ['websocket'] });
   const gloChatInWrap = document.getElementById('globalChatInnerWrapper');
+  const gloalChat = document.getElementById('globalChat');
+  let multiButtonChk = true;
+  let matchMenuEle;
 
   socket.emit('join room', location.href);
 
@@ -39,6 +42,16 @@
     msg.className = 'chatText';
     gloChatInWrap.appendChild(msg);
     gloChatInWrap.scrollTop = 1000;
+  });
+  socket.on('error message', function (data) {
+    //console.log(socket.userName);
+    if (data === 'busy') {
+      let msg = document.createElement('div');
+      msg.innerHTML = 'The Player busy now, try later.';
+      msg.className = 'errorText';
+      gloChatInWrap.appendChild(msg);
+      gloChatInWrap.scrollTop = 1000;
+    }
   });
 
   const sendBtn = document.getElementById('globalSendBtn');
@@ -78,7 +91,15 @@
         let theNewUserDiv = document.getElementById(e.id);
         /////
         theNewUserDiv.addEventListener('click', (event) => {
-          socket.emit('invitation', e.id);
+          if (!multiButtonChk) {
+            if (matchMenuEle) {
+              gloalChat.removeChild(matchMenuEle);
+              gloChatInWrap.style.display = 'block';
+              charInput.style.display = 'table';
+              multiButtonChk = !multiButtonChk;
+            }
+            socket.emit('invitation', e.id);
+          }
         });
 
         if (e.picture) {
@@ -120,9 +141,9 @@
   }
 
   const multiPlayer = document.getElementById('multiPlay');
-  let multiButtonChk = true;
 
-  const gloalChat = document.getElementById('globalChat');
+
+
   if (multiPlayer) {
     multiPlayer.addEventListener('click', (e) => {
       matchMenuSwap(multiButtonChk);
@@ -142,12 +163,13 @@
       matchMenuDiv.id = 'matchMenu';
       matchMenuDiv.className = 'container';
       gloalChat.appendChild(matchMenuDiv);
+      matchMenuEle = document.getElementById('matchMenu');
       marchMenu();
     } else {
       gloChatInWrap.style.display = 'block';
       charInput.style.display = 'table';
-      let matchMenuEle = document.getElementById('matchMenu');
-      gloalChat.removeChild(matchMenuEle);
+      matchMenuEle = document.getElementById('matchMenu');
+      if (matchMenuEle) gloalChat.removeChild(matchMenuEle);
     }
   }
   let matchtpl = document.getElementById('matchMenuTpl')

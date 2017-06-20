@@ -16,12 +16,14 @@ module.exports = (io) => {
       user.name = socket.userName;
       user.id = socket.request.user.id;
       user.socketId = socket.id;
+      user.status = 'idle';
       user.picture = socket.request.user.profile.picture;
       users.push(user);
     } else {
       // Guest
-      user.name = 'GUEST ' + socket.id.slice(0,5);
+      user.name = 'GUEST ' + socket.id.slice(0, 5);
       user.id = socket.id;
+      user.status = 'idle';
       user.picture = null;
       users.push(user);
     }
@@ -29,7 +31,12 @@ module.exports = (io) => {
 
     socket.on('join room', (data) => {
       room = data.substr(-9);
-      if (/\//.test(room)) room = 'global';
+      if (/\//.test(room)) {
+        room = 'global';
+        user.status = 'idle'
+      } else {
+        user.status = 'busy';
+      }
       socket.join(room);
       newMessage(socket, room);
     });
@@ -38,10 +45,15 @@ module.exports = (io) => {
     socket.on('invitation', (userid) => {
       users.forEach((e) => {
         if (e.id === userid && e.socketId !== socket.id) {
-          let roomNum = userid.slice(0, 5);
-          io.to(e.socketId).emit('inviteRoom', roomNum, socket.id);
+          console.log(e.status);
+          if (e.status === 'idle') {
+            let roomNum = userid.slice(0, 5);
+            e.status = 'busy';
+            io.to(e.socketId).emit('inviteRoom', roomNum, socket.id);
+          }
+          if (e.status === 'busy') io.to(socket.id).emit('error message', 'busy');
         }
-      })
+      });
     });
 
 
@@ -53,10 +65,10 @@ module.exports = (io) => {
       console.log('==User disconnect: ', user.name);
       users.forEach((e, i) => {
         if (e.name === user.name && e.id === user.id) {
-          users.splice(i,1);
+          users.splice(i, 1);
         }
       });
-      console.log('==now user list is : ' ,users);
+      console.log('==now user list is : ', users);
       updateUserList();
     });
 
@@ -72,8 +84,8 @@ module.exports = (io) => {
   };
 
   const updateUserList = () => {
-      console.log('==User list updated : ', users.length);
-      io.emit('update user', users);
+    console.log('==User list updated : ', users.length);
+    io.emit('update user', users);
   };
 
 
