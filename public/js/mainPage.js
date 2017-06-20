@@ -2,18 +2,36 @@
   //http://192.168.219.166:3000
 
   const socket = io.connect('/', { secure: true, transports: ['websocket'] });
+  const gloChatInWrap = document.getElementById('globalChatInnerWrapper');
 
+  socket.emit('join room', location.href);
 
-  socket.on('inviteRoom', function (data) {
-    location.href = '/room';
+  socket.on('inviteRoom', function (roomNum, host) {
+    const inviteWindowDiv = document.createElement('div');
+    inviteWindowDiv.id = 'inviteWindow';
+    inviteWindowDiv.innerHTML = "<div class='col-xs-12'>You've got a<br>Match Invitation</div>";
+    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnC'><p>CONFIRM</p></div>";
+    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnD'><p>DECLINE</p></div>";
+    gloChatInWrap.appendChild(inviteWindowDiv);
+
+    document.getElementById('inviteBtnC').addEventListener('click', (e) => {
+      socket.emit('invitation confirmed', roomNum, host);
+      location.href = '/room' + roomNum;
+    });
+    document.getElementById('inviteBtnD').addEventListener('click', (e) => {
+      const inviteWindow = document.getElementById('inviteWindow');
+      gloChatInWrap.removeChild(inviteWindow);
+    })
   });
+
+  socket.on('Enter Room', (roomNum) => {
+    location.href = '/room' + roomNum;
+  })
 
 
   /**
    * [broadcast message]
    */
-
-  const gloChatInWrap = document.getElementById('globalChatInnerWrapper');
   socket.on('broadcast message', function (data, username) {
     //console.log(socket.userName);
     let msg = document.createElement('div');
@@ -171,13 +189,13 @@
     ready1.addEventListener('click', (e) => {
       gamechk1 = true;
       ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-      ready1.style.paddingTop = '35px';
+      ready1.style.paddingTop = '45px';
       ready1.innerHTML = 'GAME<br>READY';
     });
     ready2.addEventListener('click', (e) => {
       gamechk2 = true;
       ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-      ready2.style.paddingTop = '35px';
+      ready2.style.paddingTop = '45px';
       ready2.innerHTML = 'GAME<br>READY';
     });
   }

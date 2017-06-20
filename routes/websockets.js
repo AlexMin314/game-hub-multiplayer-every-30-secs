@@ -2,9 +2,10 @@
 
 module.exports = (io) => {
   const users = [];
+  let room = '';
 
   io.on('connection', (socket) => {
-    console.log('User connected: ', socket.id);
+    console.log('==User connected: ', socket.id);
     let user = {};
     user.gameReady = false;
 
@@ -24,30 +25,38 @@ module.exports = (io) => {
       user.picture = null;
       users.push(user);
     }
-
     updateUserList();
 
+    socket.on('join room', (data) => {
+      room = data.substr(-9);
+      if (/\//.test(room)) room = 'global';
+      socket.join(room);
+      newMessage(socket, room);
+    });
 
-    // New message chat.
-    newMessage(socket);
 
     socket.on('invitation', (userid) => {
-      console.log('user clicked');
       users.forEach((e) => {
         if (e.id === userid && e.socketId !== socket.id) {
-          io.to(e.socketId).emit('inviteRoom', 'hey');
+          let roomNum = userid.slice(0, 5);
+          io.to(e.socketId).emit('inviteRoom', roomNum, socket.id);
         }
       })
     });
 
+
+    socket.on('invitation confirmed', (roomNum, host) => {
+      io.to(host).emit('Enter Room', roomNum, host);
+    });
+
     socket.on('disconnect', (socket) => {
-      console.log('User disconnect: ', user.name);
+      console.log('==User disconnect: ', user.name);
       users.forEach((e, i) => {
         if (e.name === user.name && e.id === user.id) {
           users.splice(i,1);
         }
       });
-      console.log('now user list is : ' ,users);
+      console.log('==now user list is : ' ,users);
       updateUserList();
     });
 
@@ -56,15 +65,14 @@ module.exports = (io) => {
   /**
    * [newMessage description]
    */
-  const newMessage = (socket) => {
+  const newMessage = (socket, room) => {
     socket.on('newMessage', (data) => {
-      console.log('New message', data);
-      io.emit('broadcast message', data, socket.userName);
+      io.in(room).emit('broadcast message', data, socket.userName);
     });
   };
 
   const updateUserList = () => {
-      console.log('User list updated : ', users);
+      console.log('==User list updated : ', users.length);
       io.emit('update user', users);
   };
 

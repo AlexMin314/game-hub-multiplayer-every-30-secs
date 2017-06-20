@@ -429,6 +429,50 @@ video {
  * Chat Room (multiPlay)
  */
 
+#inviteWindow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  padding-top: 18px;
+  width: 80%;
+  height: 128px;
+  border: 3px solid rgb(36, 36, 36);
+  background-color: rgba(88, 88, 88, 0.80);
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+}
+
+#inviteWindow p {
+  text-align: center;
+  color: white;
+}
+
+#inviteWindow #inviteBtnC, #inviteBtnD {
+  height: 45px;
+  margin-top: 11px;
+  padding-top: 10px;
+  background-color: rgba(88, 88, 88, 0.5);
+  text-align: center;
+}
+
+#inviteWindow #inviteBtnC {
+  border-top: 1px solid rgb(36, 36, 36);
+  border-right: 1px solid rgb(36, 36, 36);
+}
+
+#inviteWindow #inviteBtnD {
+  border-top: 1px solid rgb(36, 36, 36);
+}
+#inviteWindow #inviteBtnC:hover, #inviteWindow #inviteBtnD:hover, #inviteWindow p:hover {
+  background-color: rgb(36, 36, 36);
+  color: rgb(255, 0, 153);
+  font-weight: bold;
+  text-align: center;
+}
+
 #player1Info, #player2Info {
   padding-top: 10px;
   height: 147px;
@@ -445,8 +489,8 @@ video {
 
 #player1ReadyBtn, #player2ReadyBtn {
   height: 147px;
-  font-size: 30px;
-  padding-top: 10px;
+  font-size: 20px;
+  padding-top: 25px;
   border: 3px solid white;
 }
 
