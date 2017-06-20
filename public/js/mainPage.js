@@ -332,28 +332,28 @@
   socket.on('multi start', () => {
     setTimeout(() => {
       let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start ... 3';
+      msg.innerHTML = 'Game Start .................. 3';
       msg.className = 'startText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;
     }, 1000);
     setTimeout(() => {
       let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start ...... 2';
+      msg.innerHTML = 'Game Start ............ 2';
       msg.className = 'startText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;
     }, 2000);
     setTimeout(() => {
       let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start ......... 1';
+      msg.innerHTML = 'Game Start ...... 1';
       msg.className = 'startText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;
     }, 3000);
     setTimeout(() => {
       let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start ......... GG';
+      msg.innerHTML = 'Game Start!';
       msg.className = 'startText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;

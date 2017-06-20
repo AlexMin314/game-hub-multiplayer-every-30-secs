@@ -4,9 +4,6 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
-  password: String,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
 
   facebook: String,
   twitter: String,
@@ -21,8 +18,10 @@ const userSchema = new mongoose.Schema({
     name: String,
     location: String,
     picture: String,
-    usersIdx: Number
-  }
+  },
+
+  play: Array // Personal Scores, play Number, match result
+  
 }, { timestamps: true });
 
 /**
