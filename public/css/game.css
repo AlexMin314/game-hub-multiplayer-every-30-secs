@@ -139,7 +139,26 @@ video {
   height: 220px;
   width: 300px;
   margin: 0 auto 30px;
-  padding-top: 10px; }
+  border: 0px; }
+
+#gameOver p {
+  width: 90%;
+  text-align: left;
+  height: 35px;
+  font-size: 20px;
+  font-weight: lighter;
+  background-color: rgba(135, 135, 135, 0.5);
+  color: white;
+  margin-bottom: 3px;
+  margin-left: 20px;
+  padding-top: 7px;
+  padding-left: 20px; }
+
+#gameOver p:hover {
+  background-color: rgba(184, 184, 184, 0.5); }
+
+#gameOver #rank0 {
+  color: yellow; }
 
 #wrapper {
   height: 400px;
@@ -171,7 +190,7 @@ video {
 
 #retry,
 #scoreResult {
-  height: 80px;
+  height: 60px;
   width: 300px;
   font-size: 40px;
   color: white;

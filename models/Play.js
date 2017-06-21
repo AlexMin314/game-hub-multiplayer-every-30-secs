@@ -5,8 +5,8 @@ const playSchema = new mongoose.Schema({
   userid: String, // user id
   name: String, // scorebord display
   score: Number,
-  match: Number // singleplay(0), win(1), lose(0)
-  
+  match: String // single, win, lose
+
 }, { timestamps: true });
 
 const PlayInfo = mongoose.model('PlayInfo', playSchema);

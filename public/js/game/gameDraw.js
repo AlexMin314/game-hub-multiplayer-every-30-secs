@@ -1,11 +1,11 @@
 /* Drawing related in render loop */
 
 // Draw movement of player and dots.
-const drawMovements = (settings, world, mouse) => {
+const drawMovements = (settings, world, mouse, data) => {
   // player movement + collision detection.
   world.playerList.map(function (e, i, arr) {
-    gameLogic.collision.call(e, world.dotList, world, settings, true, false);
-    gameLogic.collision.call(e, world.bonus, world, settings, true, true);
+    gameLogic.collision.call(e, world.dotList, world, settings, true, false, data);
+    gameLogic.collision.call(e, world.bonus, world, settings, true, true, data);
     return e.drawPlayerMove(mouse);
   });
 

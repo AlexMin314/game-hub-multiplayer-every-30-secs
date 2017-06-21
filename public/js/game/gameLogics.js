@@ -10,7 +10,7 @@ const gameLogic = (function() {
   };
 
   // Collision detection of Player Pattern.
-  const collision = function(arr, world, settings, gameOver, bonus) {
+  const collision = function(arr, world, settings, gameOver, bonus, data) {
     // Player coordinate.
     let xThis = Math.floor(this.showInfo().x);
     let yThis = Math.floor(this.showInfo().y);
@@ -32,7 +32,7 @@ const gameLogic = (function() {
           !settings.godmode) {
           // Game over.
           gameoverChecker = true;
-          gameOverAndResult(world);
+          gameOverAndResult(settings, world, data);
         }
 
         // Bonus collision (Circle).
@@ -64,7 +64,7 @@ const gameLogic = (function() {
         if (distA + distB < colRange) {
           // Gameover
           gameoverChecker = true;
-          gameOverAndResult(world);
+          gameOverAndResult(settings, world, data);
         }
       }
     }

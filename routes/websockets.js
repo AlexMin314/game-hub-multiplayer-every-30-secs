@@ -121,6 +121,11 @@ module.exports = (io) => {
       io.to(data.room).emit('exit room', path);
     });
 
+    socket.on('singleplay starter', () => {
+      console.log('>>>>>> SINGLE');
+      io.to(socket.id).emit('singleplay start', user);
+    });
+
 
     socket.on('disconnect', (socket) => {
       console.log('==User disconnect: ', user.name);

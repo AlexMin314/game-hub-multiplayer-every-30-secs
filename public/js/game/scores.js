@@ -1,20 +1,44 @@
-const postScore = function (data, game, guest) {
+const postScore = function (data, game) {
 
-  if (!guest) {
-    const testData = JSON.stringify({
-      userid: data.id, // user id
-      name: data.name, // scorebord display
-      score: game.score,
-      match: game.match
-    });
+  const testData = JSON.stringify({
+    userid: data.id, // user id
+    name: data.name, // scorebord display
+    score: game.score,
+    match: game.match
+  });
 
-    const token = document.querySelector('meta[name="csrf-token"]').content;
+  const token = document.querySelector('meta[name="csrf-token"]').content;
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/game/post/score', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('X-CSRF-TOKEN', token);
-    xhr.send(testData);
-  }
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/game/post/score', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('X-CSRF-TOKEN', token);
+  xhr.send(testData);
 
+};
+
+const getScoreRank = function () {
+
+  const xhr = new XMLHttpRequest();
+  // let res;
+  // xhr.open('GET', '/game/get/score', true);
+  xhr.open('GET', '/game/get/score', false);
+
+  // xhr.onload = function () {
+  //   if (xhr.status >= 200 && xhr.status < 400) {
+  //     // Success!
+  //     res = xhr.responseText;
+  //     console.log(res);
+  //   } else {
+  //     // We reached our target server, but it returned an error
+  //
+  //   }
+  // };
+  //
+  // xhr.onerror = function () {
+  //   // There was a connection error of some sort
+  // };
+  xhr.send();
+
+  return JSON.parse(xhr.responseText);
 };

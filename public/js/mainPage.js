@@ -281,7 +281,7 @@
   const guestPlay = document.getElementById('guestPlay');
   if (guestPlay) {
     guestPlay.addEventListener('click', (e) => {
-      location.href = './single';
+      socket.emit('singleplay starter');
     });
   }
 
@@ -289,7 +289,7 @@
   const singlePlayer = document.getElementById('singlePlay');
   if (singlePlayer) {
     singlePlayer.addEventListener('click', (e) => {
-      //socket.e
+      socket.emit('singleplay starter');
     });
   }
 
@@ -386,5 +386,7 @@
       gloChatInWrap.scrollTop = 1000;
     }, 4000);
   });
+
+  gameStart(socket);
 
 }());

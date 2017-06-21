@@ -1,10 +1,11 @@
-(function () {
+const Game = function (data, mode) {
 
   /* Game settings */
 
   var settings = {};
   settings.FPS = 60;
   settings.frame = 0;
+  settings.mode = mode; //game mode
   // Dots(emeny).
   settings.roundStart = 3; // num
   settings.roundStartMax = 18; // num
@@ -142,7 +143,7 @@
 
     // Checking start:true, pause:false, gameoverChecker: false.
     if (world.start && !world.pause && !gameLogic.gameOverChk()) {
-      drawMovements(settings, world, mouse);
+      drawMovements(settings, world, mouse, data);
 
       if (settings.frame % 20 === 0) {
         layout.updatingBoard(divs.scoreBoard, divs.dotNumBoard, world);
@@ -180,4 +181,4 @@
     document.getElementById('godmode').addEventListener('click', event.godBtn, false);
   }());
 
-}());
+};

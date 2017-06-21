@@ -1,32 +1,27 @@
 const PlayInfo = require('../models/Play');
 const User = require('../models/User');
 
-exports.singleMain = (req, res) => {
-  res.render('game/single', {
-  });
-};
 
 exports.room = (req, res) => {
-  res.render('game/room', {
-  });
+  res.render('game/room', {});
 };
 
-
-exports.singleMainLogin = (req, res) => {
-
-};
 exports.multiplay = (req, res) => {
 
 };
 
-exports.rank = (req, res) => {
-  res.render('home', {
-  });
-};
-
-
 exports.getScore = (req, res) => {
-
+  PlayInfo
+    .find()
+    .limit(10)
+    .sort('-score')
+    .select('name score')
+    .exec((err, rank) => {
+      const body = JSON.stringify(rank);
+      res.setHeader('Content-Type', 'x-application/json');
+      res.setHeader('Content-Length', body.length);
+      res.end(body);
+    })
 };
 
 exports.postScore = (req, res, next) => {

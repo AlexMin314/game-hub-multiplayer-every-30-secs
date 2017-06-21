@@ -17,12 +17,26 @@ html
     .container
       include partials/flash
     block content
-    
+    #board
+    #pause
     
     script(src='/js/lib/jquery-3.1.1.min.js')
     script(src='/js/lib/bootstrap.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')    
-    //script(src='/js/scores.js')
+
+    script(type='text/javascript', src='./js/game/objDots.js')
+    script(type='text/javascript', src='./js/game/objPlayer.js')
+    script(type='text/javascript', src='./js/game/objLine.js')
+    script(type='text/javascript', src='./js/game/utility.js')
+    script(type='text/javascript', src='./js/game/gameSpawner.js')
+    script(type='text/javascript', src='./js/game/gameDraw.js')
+    script(type='text/javascript', src='./js/game/gameLogics.js')
+    script(type='text/javascript', src='./js/game/gameEvent.js')
+    script(type='text/javascript', src='./js/game/gameLayouts.js')
+    script(type='text/javascript', src='./js/game/gameOver.js')
+    script(type='text/javascript', src='./js/game/gameCore.js')
+    script(src='./js/game/scores.js')
+    script(src='/js/gameStart.js')
     script(src='/js/mainPage.js')
     
     block scripts
