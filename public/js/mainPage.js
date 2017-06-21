@@ -84,6 +84,12 @@
         });
       }
     }
+
+    const exitBtn = document.getElementById('exitBtn');
+    exitBtn.addEventListener('click', (e) => {
+      socket.emit('exit btn', data, '/');
+    });
+
   });
 
   socket.on('readyBtn', (who, data) => {
@@ -136,17 +142,24 @@
         multiPlayer.addEventListener('click', multiBtnEvent);
       }
       socket.emit('invitation declined', host);
-
     });
 
     // after 10 sec, automatically decline the invitation
-
     setTimeout(() => {
       if (document.getElementById('inviteBtnD')) declineBtn.click();
-    }, 3000);
-
-
+    }, 10000);
   });
+
+  socket.on('exit room', (path) => {
+    let msg = document.createElement('div');
+    msg.innerHTML = 'Exit buttom pressed.';
+    msg.className = 'errorText';
+    gloChatInWrap.appendChild(msg);
+    gloChatInWrap.scrollTop = 1000;
+    setTimeout(() => {
+      location.href = path;
+    }, 1000);
+  })
 
   socket.on('Enter Room', (roomNum) => {
     location.href = '/room/' + roomNum;

@@ -117,6 +117,9 @@ module.exports = (io) => {
       io.to(data.room).emit('multi start');
     });
 
+    socket.on('exit btn', (data, path) => {
+      io.to(data.room).emit('exit room', path);
+    });
 
 
     socket.on('disconnect', (socket) => {
