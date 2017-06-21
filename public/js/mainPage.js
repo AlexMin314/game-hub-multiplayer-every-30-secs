@@ -286,13 +286,10 @@
   }
 
 
-
   const singlePlayer = document.getElementById('singlePlay');
   if (singlePlayer) {
     singlePlayer.addEventListener('click', (e) => {
-      console.log('single play!!!');
-      location.href = './single'
-      // need login cheker
+      //socket.e
     });
   }
 

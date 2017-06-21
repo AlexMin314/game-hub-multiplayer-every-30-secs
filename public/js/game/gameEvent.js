@@ -1,4 +1,4 @@
-var eventFunc = function (settings, world, mouse, divs) {
+const gameEvent = (settings, world, mouse) => {
 
   /* Event Listener related */
 
@@ -9,17 +9,17 @@ var eventFunc = function (settings, world, mouse, divs) {
       mouse.y = e.clientY;
     },
 
-    soundButton: function (e) {
+    soundBtn: function (e) {
       if (world.sound) world.clickSound.play();
       world.sound = !(world.sound);
-      soundOnOff(world);
-      backgroundSound(world);
+      layout.soundOnOff(world);
+      utility.bgSound(world);
     },
 
-    godButton: function (e) {
+    godBtn: function (e) {
       if (world.sound) world.clickSound.play();
       settings.godmode = !(settings.godmode);
-      godOnOff(settings);
+      layout.godOnOff(settings);
     },
 
     // press spaceBar = pause
@@ -28,7 +28,7 @@ var eventFunc = function (settings, world, mouse, divs) {
         if (world.sound) world.clickSound.play();
         world.pause = !world.pause;
         world.pauseLimit -= 0.5;
-        gamePauseScreen(world);
+        layout.gamePause(world);
       }
     }
 

@@ -1,3 +1,6 @@
+const PlayInfo = require('../models/Play');
+const User = require('../models/User');
+
 exports.singleMain = (req, res) => {
   res.render('game/single', {
   });
@@ -23,16 +26,24 @@ exports.rank = (req, res) => {
 
 
 exports.getScore = (req, res) => {
-  console.log('==========' + req.body);
-  console.log('==========' + req.params);
-  console.log('==========' + req.params.name);
-  console.log('==========' + req.body.name);
-  res.render('home', {
-  });
+
 };
 
-exports.postScore = (req, res) => {
-  res.render('home', {
+exports.postScore = (req, res, next) => {
+
+  const playInfo = new PlayInfo({
+    userid: req.body.userid, // user id
+    name: req.body.name, // scorebord display
+    score: req.body.score,
+    match: req.body.match // singleplay(0), win(1), lose(0)
   });
-  console.log(req.params);
+
+  playInfo.save();
+
+  User.findById(req.user.id, (err, user) => {
+    if (err) { return next(err); };
+    user.game.play.push(playInfo);
+    user.save();
+  });
+
 };

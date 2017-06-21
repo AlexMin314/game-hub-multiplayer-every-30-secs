@@ -14,8 +14,6 @@ html
     link(rel='stylesheet', type='text/css', href='/css/main.css')
 
   body
-    video(muted='', loop='')
-      source(src='/src/test1.mp4', type='video/mp4')
     .container
       include partials/flash
     block content
@@ -24,6 +22,7 @@ html
     script(src='/js/lib/jquery-3.1.1.min.js')
     script(src='/js/lib/bootstrap.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')    
+    //script(src='/js/scores.js')
     script(src='/js/mainPage.js')
     
     block scripts

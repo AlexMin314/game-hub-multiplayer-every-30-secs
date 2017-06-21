@@ -1,16 +1,15 @@
-var Player = function (settings, world) {
-
+const Player = function (settings, world) {
   // Settings
-  var playerDot = null;
-  var playerNum = 1;
-  var pX = 0;
-  var pY = 0;
-  var pRadius = 0;
+  let playerDot = null;
+  let playerNum = 1;
+  let pX = 0;
+  let pY = 0;
+  let pRadius = 0;
 
   // Initiation.
-  (function() {
+  (function () {
     // Create Player dot.
-    playerDot = createDots('playerDot', playerNum);
+    playerDot = gameSpawn.createDots('playerDot', playerNum);
 
     // Starting Point : Center
     pRadius = playerDot.getBoundingClientRect().width / 2;
@@ -26,19 +25,21 @@ var Player = function (settings, world) {
     pY = pRect.top;
 
     // Reducing approach speed when the cursor and playerDot are closer.
-    var nextX = pX + (mouse.x - 25 - pX) / settings.playerDotSpeed;
-    var nextY = pY + (mouse.y - 25 - pY) / settings.playerDotSpeed;
+    let nextX = pX + (mouse.x - 25 - pX) / settings.playerDotSpeed;
+    nextX = Math.floor(nextX);
+    let nextY = pY + (mouse.y - 25 - pY) / settings.playerDotSpeed;
+    nextY = Math.floor(nextY);
 
     // Set new Coordinates for next frame.
     playerDot.style.left = nextX + "px";
     playerDot.style.top = nextY + "px";
 
     // Set wall boundary to player controller
-    wall.apply(playerDot);
+    gameLogic.wall.apply(playerDot);
   };
 
   // Return Coordinate for public usage
-  this.showInfo = function() {
+  this.showInfo = function () {
     return {
       x: pX + pRadius,
       y: pY + pRadius,

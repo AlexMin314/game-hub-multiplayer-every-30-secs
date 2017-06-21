@@ -4,17 +4,20 @@
 
   var settings = {};
   settings.FPS = 60;
+  settings.frame = 0;
   // Dots(emeny).
   settings.roundStart = 3; // num
   settings.roundStartMax = 18; // num
   settings.roundUpSpawn = 1; // num
   settings.speedScale = 1.0; // multiplyer
-  settings.spawnSpeed = 3500; // ms
-  settings.bounceBuffer = 5; // px
+  settings.spawnSpeed = 3000; // ms
+  settings.spawnSpeed = ( settings.spawnSpeed / 1000 * settings.FPS );
+  settings.bounceBuffer = 10; // px
   // Bonus(star).
   settings.bonusSpawn = 1; // num
   settings.bonusMax = 2; // num
-  settings.bonusSpawnSpeed = 4500; // ms
+  settings.bonusSpawnSpeed = 4000; // ms
+  settings.bonusSpawnSpeed = ( settings.bonusSpawnSpeed / 1000 * settings.FPS );
   // Player related
   settings.playerDotSpeed = 20; // lower = faster respond
   // Debug mode - don't touch.
@@ -37,6 +40,8 @@
   world.addChk = 0;
   // Bonus(Star).
   world.bonus = [];
+  world.star1 = null;
+  world.star2 = null;
   world.bonusIdx = 0;
   world.bonusLength = 0;
   world.bonusScore = 100;
@@ -78,17 +83,19 @@
   /* Board init start!!!!! */
 
   // Display Start Button.
-  startButton();
+  layout.startBtn();
 
   // Background sound play
-  backgroundSound(world, gameOverChk());
+  utility.bgSound(world, gameLogic.gameOverChk());
 
   // Append some sound effect
-  utility().audio('star1', './src/star.mp3', false, false);
-  utility().audio('star2', './src/star.mp3', false, false);
-  utility().audio('counter', './src/count.mp3', false, false);
-  utility().audio('clicked', './src/clicked.mp3', false, false);
+  utility.audio('star1', './src/star.mp3', false, false);
+  utility.audio('star2', './src/star.mp3', false, false);
+  utility.audio('counter', './src/count.mp3', false, false);
+  utility.audio('clicked', './src/clicked.mp3', false, false);
   world.clickSound = document.getElementById('clicked');
+  world.star1 = document.getElementById('star1');
+  world.star2 = document.getElementById('star2');
 
   // *Game Starting* Flow after start button click.
   function startClick(e) {
@@ -98,28 +105,28 @@
     // click sound
     if (world.sound) world.clickSound.play();
 
-    // Removing wrapper div of start page
-    divs.theWrapper = utility().wrapper;
+    divs.theWrapper = document.getElementById('wrapper');
     divs.startButtonText = document.getElementById('gameStart');
 
     // Removing sound, debug button.
-    divs.theWrapper.removeChild(utility().sound);
-    divs.theWrapper.removeChild(utility().godMode);
+    divs.theWrapper.removeChild(document.getElementById('sound'));
+    divs.theWrapper.removeChild(document.getElementById('godmode'));
 
     // Difficulty re-setting base on width when game start.
-    difficulty(settings, false, window.innerWidth, window.innerHeight);
+    gameLogic.difficulty(settings, false, window.innerWidth, window.innerHeight);
 
     // Showing start messages.
-    tutorial(divs.startButtonText, world);
+    layout.tutorial(divs.startButtonText, world);
 
     // setTimeout for waiting tutorial ends.
     setTimeout(function () {
       // Player Spawn.
-      playerSpawner(settings, world);
+      gameSpawn.playerSpawner(settings, world);
       divs.player = document.getElementById('playerDot1');
 
       //Removing start button and start game.
-      gameStarter(settings, world);
+      gameSpawn.trigger(settings, world);
+
       divs.scoreBoard = document.getElementById('score');
       divs.dotNumBoard = document.getElementById('dotNum');
     }, 3100);
@@ -130,27 +137,47 @@
 
   (function renderLoop() {
     requestAnimFrame(renderLoop);
+
+    settings.frame++;
+
     // Checking start:true, pause:false, gameoverChecker: false.
-    if (world.start && !world.pause && !gameOverChk()) {
+    if (world.start && !world.pause && !gameLogic.gameOverChk()) {
       drawMovements(settings, world, mouse);
-      updatingBoard(divs.scoreBoard, divs.dotNumBoard, world);
-      // anti-cheat.
-      difficulty(settings, true, window.innerWidth, window.innerHeight);
+
+      if (settings.frame % 20 === 0) {
+        layout.updatingBoard(divs.scoreBoard, divs.dotNumBoard, world);
+      }
+
+      if (settings.frame % 60 === 0) world.score++;
+
+      if (!world.pause && settings.frame % settings.spawnSpeed === 0) {
+        gameSpawn.spawnDraw(settings, world, false);
+      }
+
+      if (!world.pause && settings.frame % settings.bonusSpawnSpeed === 0) {
+        gameSpawn.spawnDraw(settings, world, true);
+      }
+
     }
+
+    // anti-cheat.
+    if (settings.frame % 180 === 0) {
+      gameLogic.difficulty(settings, true, window.innerWidth, window.innerHeight);
+    }
+
   }());
 
 
   /* Event Listener related */
 
-  // Retrieve methods.
-  var eFunc = eventFunc(settings, world, mouse, divs);
+  const event = gameEvent(settings, world, mouse);
 
   (function () {
-    document.addEventListener('mousemove', eFunc.getMousePos, false);
-    document.addEventListener('keydown', eFunc.gamePause, false);
+    document.addEventListener('mousemove', event.getMousePos, false);
+    document.addEventListener('keydown', event.gamePause, false);
     document.getElementById('gameStart').addEventListener('click', startClick, false);
-    document.getElementById('sound').addEventListener('click', eFunc.soundButton, false);
-    document.getElementById('godmode').addEventListener('click', eFunc.godButton, false);
+    document.getElementById('sound').addEventListener('click', event.soundBtn, false);
+    document.getElementById('godmode').addEventListener('click', event.godBtn, false);
   }());
 
 }());

@@ -16,15 +16,10 @@ const path = require('path');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const expressValidator = require('express-validator');
-const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
-const fs = require('fs');
+// const fs = require('fs');
 const passportSocketIo = require('passport.socketio');
 const cookieParser = require('cookie-parser');
-//const RedisStore = require('connect-redis')(session);
-//const redisUrl = require('redis-url');
-// const sessionStore = require('sessionstore');
-//
 
 
 /**
@@ -58,7 +53,6 @@ const sessionStore = new MongoStore({
   autoReconnect: true,
   clear_interval: 3600
 });
-//var sessionStore = new RedisStore({ client: redisUrl.connect(process.env.REDIS_URL) });
 
 
 /**
@@ -68,7 +62,6 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(expressStatusMonitor());
 app.use(compression());
 app.use(sass({
   src: path.join(__dirname, 'public'),
@@ -83,7 +76,7 @@ app.use(cookieParser());
  * Session configuration.
  */
 app.use(session({
-  //key: 'connect.sid',
+  key: 'connect.sid',
   resave: true,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
@@ -92,10 +85,10 @@ app.use(session({
 }));
 io.use(passportSocketIo.authorize({
   cookieParser: cookieParser,
-  //key: 'connect.sid',
+  key: 'connect.sid',
   secret: process.env.SESSION_SECRET,
   store: sessionStore,
-  //passport: passport,
+  passport: passport,
   success: onAuthorizeSuccess,
   fail: onAuthorizeFail
 }));

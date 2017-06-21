@@ -18,7 +18,7 @@ router.get('/singlep/:room', gameController.singleMainLogin); // for login user
 router.get('/multip/:room', gameController.multiplay); // for login user
 router.get('/game/rank', gameController.rank);
 router.get('/game/get/score', gameController.getScore);
-router.post('/game/post/score/:name/:score', gameController.postScore);
+router.post('/game/post/score', gameController.postScore);
 
 
 module.exports = router;

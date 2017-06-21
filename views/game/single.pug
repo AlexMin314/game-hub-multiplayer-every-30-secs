@@ -1,8 +1,6 @@
 extends ../layout
 
 block content
-  video(muted='', loop='')
-    source(src='./src/test1.mp4', type='video/mp4')
   #board
   #pause
 
@@ -11,8 +9,11 @@ block scripts
   script(type='text/javascript', src='./js/game/objPlayer.js')
   script(type='text/javascript', src='./js/game/objLine.js')
   script(type='text/javascript', src='./js/game/utility.js')
-  script(type='text/javascript', src='./js/game/gameStarter.js')
+  script(type='text/javascript', src='./js/game/gameSpawner.js')
   script(type='text/javascript', src='./js/game/gameDraw.js')
   script(type='text/javascript', src='./js/game/gameLogics.js')
   script(type='text/javascript', src='./js/game/gameEvent.js')
+  script(type='text/javascript', src='./js/game/gameLayouts.js')
+  script(type='text/javascript', src='./js/game/gameOver.js')
   script(type='text/javascript', src='./js/game/gameCore.js')
+  script(src='./js/game/scores.js')
