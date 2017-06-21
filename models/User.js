@@ -20,8 +20,11 @@ const userSchema = new mongoose.Schema({
     picture: String,
   },
 
-  play: Array // Personal Scores, play Number, match result
-  
+  game: {
+    play: Array, // Personal Scores, play Number, match result
+    level: Number
+  }
+
 }, { timestamps: true });
 
 /**

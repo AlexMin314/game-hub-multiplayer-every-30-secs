@@ -21,10 +21,18 @@ exports.rank = (req, res) => {
   });
 };
 
-exports.getScore = (req, res) => {
 
+exports.getScore = (req, res) => {
+  console.log('==========' + req.body);
+  console.log('==========' + req.params);
+  console.log('==========' + req.params.name);
+  console.log('==========' + req.body.name);
+  res.render('home', {
+  });
 };
 
 exports.postScore = (req, res) => {
-
+  res.render('home', {
+  });
+  console.log(req.params);
 };

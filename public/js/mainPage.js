@@ -127,14 +127,25 @@
       socket.emit('Current GameRoom', player1, player2, roomNum);
       location.href = '/room/' + roomNum;
     });
-    document.getElementById('inviteBtnD').addEventListener('click', (e) => {
+
+    const declineBtn = document.getElementById('inviteBtnD');
+    declineBtn.addEventListener('click', (e) => {
       const inviteWindow = document.getElementById('inviteWindow');
       gloChatInWrap.removeChild(inviteWindow);
       if (multiPlayer) {
         multiPlayer.addEventListener('click', multiBtnEvent);
       }
       socket.emit('invitation declined', host);
-    })
+
+    });
+
+    // after 10 sec, automatically decline the invitation
+
+    setTimeout(() => {
+      if (document.getElementById('inviteBtnD')) declineBtn.click();
+    }, 3000);
+
+
   });
 
   socket.on('Enter Room', (roomNum) => {

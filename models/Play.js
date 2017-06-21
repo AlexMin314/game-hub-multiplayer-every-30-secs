@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const playSchema = new mongoose.Schema({
-  _id: String, // object id
   userid: String, // user id
   name: String, // scorebord display
   score: Number,
