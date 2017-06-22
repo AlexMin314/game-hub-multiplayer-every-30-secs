@@ -418,6 +418,9 @@ const mainRoom = (function () {
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;
     }, 4000);
+    setTimeout(() => {
+      socket.emit('multiplay starter');
+    }, 5000);
   });
 
   gameStart(socket);

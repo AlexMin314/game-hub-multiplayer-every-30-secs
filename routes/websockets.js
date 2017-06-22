@@ -33,7 +33,7 @@ module.exports = (io) => {
     }
 
 
-    updateUserList();
+    io.emit('update user', users);
 
     socket.on('invitation', (userid) => {
       users.forEach((e) => {
@@ -112,8 +112,8 @@ module.exports = (io) => {
     });
 
     socket.on('ready checker', (from, to) => {
-      io.to(from.socketId).emit('multi start');
-      io.to(to.socketId).emit('multi start');
+      io.to(from.socketId).emit('multi start', from.socketId);
+      io.to(to.socketId).emit('multi start', to.socketId);
     });
 
     socket.on('exit btn', (from, to, path) => {
@@ -129,6 +129,14 @@ module.exports = (io) => {
       io.to(socket.id).emit('singleplay start', miniData);
     });
 
+    socket.on('multiplay starter', () => {
+      const miniData = {};
+      miniData.id = user.id;
+      miniData.name = user.name;
+      miniData.guest = user.guest;
+      io.to(socket.id).emit('multiplay start', miniData);
+    });
+
     // game result
 
     socket.on('postScore', (gameResult) => {
@@ -142,7 +150,6 @@ module.exports = (io) => {
     })
 
 
-
     socket.on('disconnect', (socket) => {
       console.log('==User disconnect: ', user.name);
       users.forEach((e, i) => {
@@ -150,27 +157,9 @@ module.exports = (io) => {
           users.splice(i, 1);
         }
       });
-      updateUserList();
+      io.emit('update user', users);
     });
 
   });
-
-  /**
-   * [newMessage description]
-   */
-  const newMessage = (socket, room) => {
-    //if (socket.rooms.indexOf(room) >= 0) {
-      socket.on('newMessage', (data) => {
-        console.log(Object.key(socket.rooms)[1]);
-        io.to(room).emit('broadcast message', data, socket.userName);
-      });
-    //}
-  };
-
-  const updateUserList = () => {
-    console.log('==User list updated : ', users.length);
-    io.emit('update user', users);
-  };
-
 
 };

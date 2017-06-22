@@ -1,4 +1,4 @@
-const Game = function (data, mode) {
+const Game = function (data, mode, player) {
 
   /* Game settings */
 
