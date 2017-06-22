@@ -14,8 +14,8 @@ const gameController = require('../controllers/game');
 
 router.get('/room/:room', gameController.room); // game lounge
 router.get('/multip/:room', gameController.multiplay); // for login user
-router.get('/game/get/score', gameController.getScore);
-router.post('/game/post/score', gameController.postScore);
+//router.get('/game/get/score', gameController.getScore);
+//router.post('/game/post/score', gameController.postScore);
 
 
 module.exports = router;

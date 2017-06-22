@@ -1,4 +1,5 @@
 //const socketsController = require('../controllers/sockets');
+const gameController = require('../controllers/game');
 
 module.exports = (io) => {
   const users = [];
@@ -122,9 +123,24 @@ module.exports = (io) => {
     });
 
     socket.on('singleplay starter', () => {
-      console.log('>>>>>> SINGLE');
-      io.to(socket.id).emit('singleplay start', user);
+      const miniData = {};
+      miniData.id = user.id;
+      miniData.name = user.name;
+      io.to(socket.id).emit('singleplay start', miniData);
     });
+
+    // game result
+
+    socket.on('postScore' , (gameResult) => {
+      gameController.postScoreSocket(gameResult);
+    })
+
+    socket.on('getScoreBoard' , (status) => {
+      gameController.getScoreSocket((rank) => {
+        io.to(socket.id).emit('drawScoreBoard', rank, status);
+      });
+    })
+
 
 
     socket.on('disconnect', (socket) => {

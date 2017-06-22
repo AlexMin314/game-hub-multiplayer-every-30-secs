@@ -155,7 +155,9 @@ const Game = function (data, mode) {
         gameSpawn.spawnDraw(settings, world, false);
       }
 
-      if (!world.pause && settings.frame % settings.bonusSpawnSpeed === 0) {
+      if (!world.pause
+          && settings.frame % settings.bonusSpawnSpeed === 0
+          && settings.frame > 200) {
         gameSpawn.spawnDraw(settings, world, true);
       }
 

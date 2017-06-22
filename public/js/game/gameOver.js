@@ -1,17 +1,23 @@
 // Game over and Showing game result.
 const gameOverAndResult = (settings, world, data) => {
 
+  const gameBoard = document.getElementById('board');
+  // const ajax = false; // test purpose
+
   const gameResult = {}
   gameResult.score = world.score;
   if (settings.mode === 'single') gameResult.match = 'single';
   if (settings.mode === 'multiplay') {
     // gameResult.match = 'win';
   }
+  gameResult.id = data.id;
+  gameResult.name = data.name;
 
   // Post Score
-  if (!data.guest) postScore(data, gameResult)
+  // if (!data.guest && ajax) postScore(data, gameResult)
 
-  const gameBoard = document.getElementById('board');
+  if (!data.guest) mainPage.socket.emit('postScore', gameResult);
+
 
   // Get rank info.
   // let rankArr = getScoreRank();
@@ -54,9 +60,19 @@ const gameOverAndResult = (settings, world, data) => {
   };
 
   // ====> Leader Board!! here??
-  setTimeout(() => {
-    getScoreRank(gameOverRank);
-  }, 1000);
+  // if (ajax) {
+  //   setTimeout(() => {
+  //     getScoreRank(gameOverRank);
+  //   }, 1000);
+  // }
+  mainPage.socket.emit('getScoreBoard', 'gameover');
+
+  mainPage.socket.on('drawScoreBoard', (data, status) => {
+    if (status === 'gameover') data = data.slice(0, 5);
+    setTimeout(() => {
+      gameOverRank(data);
+    }, 1000);
+  });
 
 
   // Appending retryDiv to the wrapper

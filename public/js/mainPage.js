@@ -1,4 +1,4 @@
-(function () {
+const mainPage = (function () {
   //http://192.168.219.166:3000
 
   const socket = io.connect('/', { secure: true, transports: ['websocket'] });
@@ -388,5 +388,10 @@
   });
 
   gameStart(socket);
+  scoreSockets(socket);
+
+  return {
+    socket: socket
+  }
 
 }());
