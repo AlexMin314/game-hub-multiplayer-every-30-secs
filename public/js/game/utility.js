@@ -39,8 +39,8 @@ const utility = (function () {
 
   // Appending background sound, game over.
   const backgroundSound = (world, gameOver) => {
-    if (!gameOver && world.sound) audioTagHelper('bgSound', './src/bg.mp3', true, true, 0.2);
-    if (gameOver && world.sound) audioTagHelper('bgSound', './src/over.mp3', false, true, 0.4);
+    if (!gameOver && world.sound) audioTagHelper('bgSound', './src/bg.mp3', true, true, 0.1);
+    if (gameOver && world.sound) audioTagHelper('bgSound', './src/over.mp3', false, true, 0.2);
     // Mute.
     if (!world.sound) divInfo.gameBoard.removeChild(document.getElementById('bgSound'));
   };

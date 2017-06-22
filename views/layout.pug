@@ -16,6 +16,9 @@ html
   body
     .container
       include partials/flash
+      audio#star1(src='./src/star.mp3')
+      audio#counter(src='./src/count.mp3')
+      audio#clicked(src='./src/clicked.mp3')
     block content
     #board
     #pause

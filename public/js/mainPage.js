@@ -1,9 +1,15 @@
-const mainPage = (function () {
+const mainRoom = (function () {
   //http://192.168.219.166:3000
 
   const socket = io.connect('/', { secure: true, transports: ['websocket'] });
-  const gloChatInWrap = document.getElementById('globalChatInnerWrapper');
+  let gloChatInWrap = document.getElementById('globalChatInnerWrapper');
   const gloalChat = document.getElementById('globalChat');
+
+  const star = document.getElementById('star1');
+  const clicked = document.getElementById('clicked');
+  const beepSound = document.getElementById('counter');
+  beepSound.volume = '0.5';
+  clicked.volume = '0.8';
   let multiButtonChk = true;
   let matchMenuEle;
   let player1 = false;
@@ -13,164 +19,14 @@ const mainPage = (function () {
   let gamechk1 = false;
   let gamechk2 = false;
 
-  socket.emit('join room', location.href);
-  socket.emit('join gameRoom', location.href);
 
-
-  socket.on('Matchroom display', (data) => {
-    if (data.player1.socketId === socket.id) player1 = true;
-    if (data.player2.socketId === socket.id) player2 = true;
-    // player1Info
-    const player1Info = document.getElementById('player1Info');
-    const player2Info = document.getElementById('player2Info');
-
-    const player1InfoDiv = document.createElement('div');
-    player1InfoDiv.id = 'player1InfoWrap';
-    player1InfoDiv.className = 'playersInfo';
-    player1Info.appendChild(player1InfoDiv);
-
-    const player1InfoWrap = document.getElementById('player1InfoWrap');
-
-    const player1Img = document.createElement('img');
-    player1Img.className = 'playersImg';
-    player1Img.src = data.player1.picture;
-    player1InfoWrap.appendChild(player1Img);
-
-    const player1NameDiv = document.createElement('div');
-    player1NameDiv.className = 'playersName';
-    player1NameDiv.innerHTML = data.player1.name;
-    player1InfoWrap.appendChild(player1NameDiv);
-
-
-
-    const player2InfoDiv = document.createElement('div');
-    player2InfoDiv.id = 'player2InfoWrap';
-    player2InfoDiv.className = 'playersInfo';
-    player2Info.appendChild(player2InfoDiv);
-
-    const player2InfoWrap = document.getElementById('player2InfoWrap');
-
-    const player2Img = document.createElement('img');
-    player2Img.className = 'playersImg';
-    player2Img.src = data.player2.picture;
-    player2InfoWrap.appendChild(player2Img);
-
-    const player2NameDiv = document.createElement('div');
-    player2NameDiv.className = 'playersName';
-    player2NameDiv.innerHTML = data.player1.name;
-    player2InfoWrap.appendChild(player2NameDiv);
-
-
-    ready1 = document.getElementById('player1ReadyBtn');
-    ready2 = document.getElementById('player2ReadyBtn');
-
-    if (ready1) {
-      if (player1) {
-        ready1.addEventListener('click', (e) => {
-          gamechk1 = true;
-          ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-          ready1.style.paddingTop = '45px';
-          ready1.innerHTML = 'GAME<br>READY';
-          socket.emit('game readyBtn', 'player1', data);
-        });
-      }
-      if (player2) {
-        ready2.addEventListener('click', (e) => {
-          gamechk2 = true;
-          ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-          ready2.style.paddingTop = '45px';
-          ready2.innerHTML = 'GAME<br>READY';
-          socket.emit('game readyBtn', 'player2', data);
-        });
-      }
-    }
-
-    const exitBtn = document.getElementById('exitBtn');
-    exitBtn.addEventListener('click', (e) => {
-      socket.emit('exit btn', data, '/');
-    });
-
-  });
-
-  socket.on('readyBtn', (who, data) => {
-    if (who === 'player1' && player2 === true) {
-      gamechk1 = true;
-      ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-      ready1.style.paddingTop = '45px';
-      ready1.innerHTML = 'GAME<br>READY';
-      if (gamechk1 === true && gamechk2 === true) socket.emit('ready checker', data);
-    }
-    if (who === 'player2' && player1 === true) {
-      gamechk2 = true;
-      ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-      ready2.style.paddingTop = '45px';
-      ready2.innerHTML = 'GAME<br>READY';
-      if (gamechk1 === true && gamechk2 === true) socket.emit('ready checker', data);
-    }
-  });
-
-
-
-
-  socket.on('inviteRoom', function (roomNum, host, users) {
-    const inviteWindowDiv = document.createElement('div');
-    inviteWindowDiv.id = 'inviteWindow';
-    inviteWindowDiv.innerHTML = "<div class='col-xs-12'>You've got a<br>Match Invitation</div>";
-    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnC'><p>CONFIRM</p></div>";
-    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnD'><p>DECLINE</p></div>";
-    gloChatInWrap.appendChild(inviteWindowDiv);
-
-    multiPlayer.removeEventListener('click', multiBtnEvent);
-
-    document.getElementById('inviteBtnC').addEventListener('click', (e) => {
-      let player1;
-      let player2;
-      socket.emit('invitation confirmed', roomNum, host);
-      users.forEach((e) => {
-        if (e.socketId === host) player1 = e;
-        if (e.socketId === socket.id) player2 = e;
-      })
-      socket.emit('Current GameRoom', player1, player2, roomNum);
-      location.href = '/room/' + roomNum;
-    });
-
-    const declineBtn = document.getElementById('inviteBtnD');
-    declineBtn.addEventListener('click', (e) => {
-      const inviteWindow = document.getElementById('inviteWindow');
-      gloChatInWrap.removeChild(inviteWindow);
-      if (multiPlayer) {
-        multiPlayer.addEventListener('click', multiBtnEvent);
-      }
-      socket.emit('invitation declined', host);
-    });
-
-    // after 10 sec, automatically decline the invitation
-    setTimeout(() => {
-      if (document.getElementById('inviteBtnD')) declineBtn.click();
-    }, 10000);
-  });
-
-  socket.on('exit room', (path) => {
-    let msg = document.createElement('div');
-    msg.innerHTML = 'Exit buttom pressed.';
-    msg.className = 'errorText';
-    gloChatInWrap.appendChild(msg);
-    gloChatInWrap.scrollTop = 1000;
-    setTimeout(() => {
-      location.href = path;
-    }, 1000);
-  })
-
-  socket.on('Enter Room', (roomNum) => {
-    location.href = '/room/' + roomNum;
-  })
+  socket.emit('enter lobby');
 
 
   /**
    * [broadcast message]
    */
   socket.on('broadcast message', function (data, username) {
-    //console.log(socket.userName);
     let msg = document.createElement('div');
     msg.innerHTML = '<span class="chatTextId">' + username + '</span> :  ' + data;
     msg.className = 'chatText';
@@ -210,25 +66,196 @@ const mainPage = (function () {
     }
   });
 
-  const sendBtn = document.getElementById('globalSendBtn');
-  if (sendBtn) {
-    sendBtn.addEventListener('click', function (e) {
-      // e.preventDefault();
-      let message = document.getElementById('globalChatVal').value;
-      if (message) socket.emit('newMessage', message);
-      document.getElementById('globalChatVal').value = '';
-    });
-  }
-  const sendInput = document.getElementById('globalChatVal');
-  if (sendInput) {
-    sendInput.addEventListener('keypress', function (e) {
-      if (event.key === 'Enter') {
+  function btnEvent() {
+    gloChatInWrap = document.getElementById('globalChatInnerWrapper');
+    let sendBtn = document.getElementById('globalSendBtn');
+    if (sendBtn) {
+      sendBtn.addEventListener('click', function (e) {
+        // e.preventDefault();
         let message = document.getElementById('globalChatVal').value;
         if (message) socket.emit('newMessage', message);
         document.getElementById('globalChatVal').value = '';
-      }
-    });
+      });
+    }
+    let sendInput = document.getElementById('globalChatVal');
+    if (sendInput) {
+      sendInput.addEventListener('keypress', function (e) {
+        if (event.key === 'Enter') {
+          let message = document.getElementById('globalChatVal').value;
+          if (message) socket.emit('newMessage', message);
+          document.getElementById('globalChatVal').value = '';
+        }
+      });
+    }
   }
+
+  btnEvent();
+
+
+
+
+
+  socket.on('join room', (roomNum) => {
+    const mainContainer = document.getElementById('mainContainer');
+    mainContainer.innerHTML = '';
+    const roomLayout = document.getElementById('roomLayout').innerHTML;
+    mainContainer.innerHTML = roomLayout;
+    btnEvent();
+    socket.emit('join gameRoom', roomNum);
+  });
+
+  socket.on('Matchroom display', (host, opp) => {
+    if (host.socketId === socket.id) player1 = true;
+    if (opp.socketId === socket.id) player2 = true;
+    // player1Info
+    const player1Info = document.getElementById('player1Info');
+    const player2Info = document.getElementById('player2Info');
+
+    const player1InfoDiv = document.createElement('div');
+    player1InfoDiv.id = 'player1InfoWrap';
+    player1InfoDiv.className = 'playersInfo';
+    player1Info.appendChild(player1InfoDiv);
+
+    const player1InfoWrap = document.getElementById('player1InfoWrap');
+
+    const player1Img = document.createElement('img');
+    player1Img.className = 'playersImg';
+    player1Img.src = host.picture;
+    player1InfoWrap.appendChild(player1Img);
+
+    const player1NameDiv = document.createElement('div');
+    player1NameDiv.className = 'playersName';
+    player1NameDiv.innerHTML = host.name;
+    player1InfoWrap.appendChild(player1NameDiv);
+
+
+
+    const player2InfoDiv = document.createElement('div');
+    player2InfoDiv.id = 'player2InfoWrap';
+    player2InfoDiv.className = 'playersInfo';
+    player2Info.appendChild(player2InfoDiv);
+
+    const player2InfoWrap = document.getElementById('player2InfoWrap');
+
+    const player2Img = document.createElement('img');
+    player2Img.className = 'playersImg';
+    player2Img.src = opp.picture;
+    player2InfoWrap.appendChild(player2Img);
+
+    const player2NameDiv = document.createElement('div');
+    player2NameDiv.className = 'playersName';
+    player2NameDiv.innerHTML = opp.name;
+    player2InfoWrap.appendChild(player2NameDiv);
+
+
+    ready1 = document.getElementById('player1ReadyBtn');
+    ready2 = document.getElementById('player2ReadyBtn');
+
+    if (ready1) {
+      if (player1) {
+        ready1.addEventListener('click', (e) => {
+          gamechk1 = true;
+          star.play();
+          ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+          ready1.style.paddingTop = '45px';
+          ready1.innerHTML = 'GAME<br>READY';
+          socket.emit('game readyBtn', 'player1', opp, host);
+        });
+      }
+      if (player2) {
+        ready2.addEventListener('click', (e) => {
+          gamechk2 = true;
+          star.play();
+          ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+          ready2.style.paddingTop = '45px';
+          ready2.innerHTML = 'GAME<br>READY';
+          socket.emit('game readyBtn', 'player2', host, opp);
+        });
+      }
+    }
+
+    const exitBtn = document.getElementById('exitBtn');
+    exitBtn.addEventListener('click', (e) => {
+      clicked.play();
+      socket.emit('exit btn', host, opp, '/');
+    });
+
+  });
+
+  socket.on('readyBtn', (from, to, host) => {
+    if (from === 'player1' && player2 === true) {
+      gamechk1 = true;
+      star.play();
+      ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+      ready1.style.paddingTop = '45px';
+      ready1.innerHTML = 'GAME<br>READY';
+      if (gamechk1 === true && gamechk2 === true) socket.emit('ready checker', host, to);
+    }
+    if (from === 'player2' && player1 === true) {
+      gamechk2 = true;
+      star.play();
+      ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
+      ready2.style.paddingTop = '45px';
+      ready2.innerHTML = 'GAME<br>READY';
+      if (gamechk1 === true && gamechk2 === true) socket.emit('ready checker', host, to);
+    }
+  });
+
+
+
+
+  socket.on('inviteRoom', function (roomNum, host, users) {
+    const inviteWindowDiv = document.createElement('div');
+    inviteWindowDiv.id = 'inviteWindow';
+    inviteWindowDiv.innerHTML = "<div class='col-xs-12'>You've got a<br>Match Invitation</div>";
+    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnC'><p>CONFIRM</p></div>";
+    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnD'><p>DECLINE</p></div>";
+    gloChatInWrap.appendChild(inviteWindowDiv);
+    beepSound.play(); // ding dong??
+
+    multiPlayer.removeEventListener('click', multiBtnEvent);
+
+    document.getElementById('inviteBtnC').addEventListener('click', (e) => {
+      let player1;
+      let player2;
+      clicked.play();
+      const mainContainer = document.getElementById('mainContainer');
+      mainContainer.innerHTML = '';
+      const roomLayout = document.getElementById('roomLayout').innerHTML;
+      mainContainer.innerHTML = roomLayout;
+      btnEvent();
+      socket.emit('invitation confirmed', roomNum, host);
+    });
+
+    const declineBtn = document.getElementById('inviteBtnD');
+    declineBtn.addEventListener('click', (e) => {
+      const inviteWindow = document.getElementById('inviteWindow');
+      clicked.play();
+      gloChatInWrap.removeChild(inviteWindow);
+      if (multiPlayer) {
+        multiPlayer.addEventListener('click', multiBtnEvent);
+      }
+      socket.emit('invitation declined', host);
+    });
+
+    // after 10 sec, automatically decline the invitation
+    setTimeout(() => {
+      if (document.getElementById('inviteBtnD')) declineBtn.click();
+    }, 10000);
+  });
+
+  socket.on('exit room', (path) => {
+    let msg = document.createElement('div');
+    msg.innerHTML = 'Exit buttom pressed.';
+    msg.className = 'errorText';
+    gloChatInWrap.appendChild(msg);
+    gloChatInWrap.scrollTop = 1000;
+    setTimeout(() => {
+      location.href = path;
+    }, 1500);
+  });
+
+
 
 
   /**
@@ -254,6 +281,7 @@ const mainPage = (function () {
               charInput.style.display = 'table';
               multiButtonChk = !multiButtonChk;
             }
+            clicked.play();
             socket.emit('invitation', e.id);
           }
         });
@@ -281,6 +309,7 @@ const mainPage = (function () {
   const guestPlay = document.getElementById('guestPlay');
   if (guestPlay) {
     guestPlay.addEventListener('click', (e) => {
+      clicked.play();
       socket.emit('singleplay starter');
     });
   }
@@ -289,6 +318,7 @@ const mainPage = (function () {
   const singlePlayer = document.getElementById('singlePlay');
   if (singlePlayer) {
     singlePlayer.addEventListener('click', (e) => {
+      clicked.play();
       socket.emit('singleplay starter');
     });
   }
@@ -296,6 +326,7 @@ const mainPage = (function () {
   const multiPlayer = document.getElementById('multiPlay');
 
   function multiBtnEvent(e) {
+    clicked.play();
     matchMenuSwap(multiButtonChk);
     multiButtonChk = !multiButtonChk;
   }
@@ -336,6 +367,7 @@ const mainPage = (function () {
     let vsModeEle = document.getElementById('vsMode');
     let coopModeEle = document.getElementById('coopMode');
     vsModeEle.addEventListener('click', (e) => {
+      clicked.play();
       console.log('1VS1 mode on');
       vsModeEle.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
       coopModeEle.style.backgroundColor = 'rgba(255, 255, 255, 0)';
@@ -344,6 +376,7 @@ const mainPage = (function () {
 
     });
     coopModeEle.addEventListener('click', (e) => {
+      clicked.play();
       console.log('Coop Mode on');
       vsModeEle.style.backgroundColor = 'rgba(255, 255, 255, 0)';
       coopModeEle.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
@@ -380,7 +413,7 @@ const mainPage = (function () {
     }, 3000);
     setTimeout(() => {
       let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start!';
+      msg.innerHTML = 'Game Start !!!';
       msg.className = 'startText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;

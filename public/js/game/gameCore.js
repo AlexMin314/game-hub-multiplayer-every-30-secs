@@ -90,10 +90,10 @@ const Game = function (data, mode) {
   utility.bgSound(world, gameLogic.gameOverChk());
 
   // Append some sound effect
-  utility.audio('star1', './src/star.mp3', false, false);
+  //utility.audio('star1', './src/star.mp3', false, false);
   utility.audio('star2', './src/star.mp3', false, false);
-  utility.audio('counter', './src/count.mp3', false, false);
-  utility.audio('clicked', './src/clicked.mp3', false, false);
+  //utility.audio('counter', './src/count.mp3', false, false);
+  //utility.audio('clicked', './src/clicked.mp3', false, false);
   world.clickSound = document.getElementById('clicked');
   world.star1 = document.getElementById('star1');
   world.star2 = document.getElementById('star2');

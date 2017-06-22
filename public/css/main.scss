@@ -318,6 +318,10 @@ label, h3, h4 {
   padding-top: 12px;
   margin: 2px 0;
   word-break: break-all;
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  overflow-style: none;
 }
 
 .newUser:hover {

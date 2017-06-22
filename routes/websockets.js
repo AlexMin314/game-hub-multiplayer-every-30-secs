@@ -3,16 +3,16 @@ const gameController = require('../controllers/game');
 
 module.exports = (io) => {
   const users = [];
-  const curGameRoom = [];
-  let room = '';
 
   io.on('connection', (socket) => {
     console.log('==User connected: ', socket.id);
     let user = {};
 
+
     // reassign socket value with passport data.
     if (socket.request.user.logged_in) {
       socket.userName = socket.request.user.profile.name;
+      socket.roomName = '';
       //socket.userId = socket.request.user.id;
       user.name = socket.userName;
       user.guest = false;
@@ -32,27 +32,8 @@ module.exports = (io) => {
       users.push(user);
     }
 
-    // game room socket id update.
-    curGameRoom.forEach((e) => {
-      if (e.player1.id === user.id) e.player1.socketId = socket.id;
-      if (e.player2.id === user.id) e.player2.socketId = socket.id;
-    })
 
     updateUserList();
-
-    socket.on('join room', (data) => {
-      room = data.substr(-8);
-      if (/\//.test(room)) {
-        room = 'global';
-        user.status = 'idle'
-        if (user.guest) user.status = 'guest';
-      } else {
-        user.status = 'busy';
-      }
-      socket.join(room);
-      newMessage(socket, room);
-    });
-
 
     socket.on('invitation', (userid) => {
       users.forEach((e) => {
@@ -76,9 +57,43 @@ module.exports = (io) => {
       });
     });
 
+    socket.on('newMessage', (data) => {
+      io.to(socket.roomName).emit('broadcast message', data, socket.userName);
+    });
+
+    socket.on('enter lobby', () => {
+      socket.join('lobby');
+      socket.roomName = 'lobby';
+    });
+
+    socket.on('join gameRoom', (roomNum) => {
+      socket.roomName = roomNum;
+      socket.leave('lobby');
+      socket.join(roomNum);
+    });
 
     socket.on('invitation confirmed', (roomNum, host) => {
-      io.to(host).emit('Enter Room', roomNum, host);
+      socket.roomName = roomNum;
+      socket.leave('lobby');
+      socket.join(roomNum);
+
+      const dataOpp = {};
+      dataOpp.socketId = user.socketId;
+      dataOpp.name = user.name;
+      dataOpp.picture = user.picture;
+
+      const dataHost = {};
+      users.forEach((e) => {
+        if (e.socketId === host) {
+          dataHost.socketId = host;
+          dataHost.name = e.name;
+          dataHost.picture = e.picture;
+        }
+      });
+
+      io.to(host).emit('join room', roomNum);
+      io.to(host).emit('Matchroom display', dataHost, dataOpp);
+      io.to(socket.id).emit('Matchroom display', dataHost, dataOpp);
     });
 
     socket.on('invitation declined', (host) => {
@@ -92,35 +107,18 @@ module.exports = (io) => {
 
     });
 
-    socket.on('Current GameRoom', (player1, player2, room) => {
-      let curGame = {};
-      curGame.player1 = player1;
-      curGame.player2 = player2;
-      curGame.room = room;
-      curGameRoom.push(curGame);
+    socket.on('game readyBtn', (from, to, host) => {
+      io.to(to.socketId).emit('readyBtn', from, to, host);
     });
 
-    socket.on('join gameRoom', (data) => {
-      let gameRoom = data.substr(-8);
-      let curGameInfo;
-      curGameRoom.forEach((e) => {
-        if (e.room === gameRoom) curGameInfo = e;
-      });
-      if (curGameInfo) {
-        io.to(socket.id).emit('Matchroom display', curGameInfo);
-      }
+    socket.on('ready checker', (from, to) => {
+      io.to(from.socketId).emit('multi start');
+      io.to(to.socketId).emit('multi start');
     });
 
-    socket.on('game readyBtn', (who, data) => {
-      io.to(data.room).emit('readyBtn', who, data);
-    });
-
-    socket.on('ready checker', (data) => {
-      io.to(data.room).emit('multi start');
-    });
-
-    socket.on('exit btn', (data, path) => {
-      io.to(data.room).emit('exit room', path);
+    socket.on('exit btn', (from, to, path) => {
+      io.to(from.socketId).emit('exit room', path);
+      io.to(to.socketId).emit('exit room', path);
     });
 
     socket.on('singleplay starter', () => {
@@ -133,12 +131,12 @@ module.exports = (io) => {
 
     // game result
 
-    socket.on('postScore' , (gameResult) => {
+    socket.on('postScore', (gameResult) => {
       gameController.postScoreSocket(gameResult);
     })
 
-    socket.on('getScoreBoard' , (status) => {
-      gameController.getScoreSocket(function(rank) {
+    socket.on('getScoreBoard', (status) => {
+      gameController.getScoreSocket(function (rank) {
         io.to(socket.id).emit('drawScoreBoard', rank, status);
       });
     })
@@ -161,9 +159,12 @@ module.exports = (io) => {
    * [newMessage description]
    */
   const newMessage = (socket, room) => {
-    socket.on('newMessage', (data) => {
-      io.in(room).emit('broadcast message', data, socket.userName);
-    });
+    //if (socket.rooms.indexOf(room) >= 0) {
+      socket.on('newMessage', (data) => {
+        console.log(Object.key(socket.rooms)[1]);
+        io.to(room).emit('broadcast message', data, socket.userName);
+      });
+    //}
   };
 
   const updateUserList = () => {

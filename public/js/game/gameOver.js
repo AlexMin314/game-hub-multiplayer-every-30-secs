@@ -16,7 +16,7 @@ const gameOverAndResult = (settings, world, data) => {
   // Post Score
   // if (!data.guest && ajax) postScore(data, gameResult)
 
-  if (!data.guest) mainPage.socket.emit('postScore', gameResult);
+  if (!data.guest) mainRoom.socket.emit('postScore', gameResult);
 
 
   // Get rank info.
@@ -65,9 +65,9 @@ const gameOverAndResult = (settings, world, data) => {
   //     getScoreRank(gameOverRank);
   //   }, 1000);
   // }
-  mainPage.socket.emit('getScoreBoard', 'gameover');
+  mainRoom.socket.emit('getScoreBoard', 'gameover');
 
-  mainPage.socket.on('drawScoreBoard', (data, status) => {
+  mainRoom.socket.on('drawScoreBoard', (data, status) => {
     if (status === 'gameover') data = data.slice(0, 5);
     setTimeout(() => {
       gameOverRank(data);

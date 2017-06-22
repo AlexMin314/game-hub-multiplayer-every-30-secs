@@ -40,11 +40,11 @@ const layout = (function () {
 
   // Game Pause Screen display.
   const gamePauseScreen = (world) => {
-    divInfo.pause.pause.style.visibility = 'hidden';
+    divInfo.pause.style.visibility = 'hidden';
     if (world.pauseLimit % 1 !== 0) {
-      divInfo.pause.pause.style.visibility = 'visible';
-      divInfo.pause.pause.innerHTML = 'GAME PAUSED<br>';
-      divInfo.pause.pause.innerHTML += '<span>' + (world.pauseLimit - 0.5) + ' TIMES LEFT</span>';
+      divInfo.pause.style.visibility = 'visible';
+      divInfo.pause.innerHTML = 'GAME PAUSED<br>';
+      divInfo.pause.innerHTML += '<span>' + (world.pauseLimit - 0.5) + ' TIMES LEFT</span>';
     }
   };
 
@@ -105,7 +105,7 @@ const layout = (function () {
 
     setTimeout(() => {
       startButtonText.style.border = '0px';
-      
+
       startButtonText.innerHTML = 'EVERY<br>30 SECS';
     }, interval * 0);
 
