@@ -388,7 +388,7 @@ const mainPage = (function () {
   });
 
   gameStart(socket);
-  scoreSockets(socket);
+  // scoreSockets(socket);
 
   return {
     socket: socket

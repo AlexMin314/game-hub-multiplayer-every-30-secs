@@ -26,6 +26,7 @@ module.exports = (io) => {
       user.name = 'GUEST ' + socket.id.slice(0, 5);
       user.guest = true;
       user.id = socket.id;
+      user.socketId = socket.id;
       user.status = 'guest';
       user.picture = null;
       users.push(user);
@@ -126,6 +127,7 @@ module.exports = (io) => {
       const miniData = {};
       miniData.id = user.id;
       miniData.name = user.name;
+      miniData.guest = user.guest;
       io.to(socket.id).emit('singleplay start', miniData);
     });
 
@@ -136,7 +138,7 @@ module.exports = (io) => {
     })
 
     socket.on('getScoreBoard' , (status) => {
-      gameController.getScoreSocket((rank) => {
+      gameController.getScoreSocket(function(rank) {
         io.to(socket.id).emit('drawScoreBoard', rank, status);
       });
     })

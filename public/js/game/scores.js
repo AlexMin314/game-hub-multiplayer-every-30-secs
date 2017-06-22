@@ -2,13 +2,13 @@
  * Via websockets
  */
   // - codes in gameOver.js
-const scoreSockets = (socket) => {
-
-  socket.on('drawScoreBoard', (data) => {
-
-  });
-
-};
+// const scoreSockets = (socket) => {
+//
+//   socket.on('drawScoreBoard', (data) => {
+//
+//   });
+//
+// };
 
 /*
  *Using Ajax
