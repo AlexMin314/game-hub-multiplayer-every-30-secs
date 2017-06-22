@@ -27,15 +27,16 @@ const Dots = function (dotNum, settings, world, bonus) {
     const bRect = utility.board.getBoundingClientRect();
 
     const mode = settings.mode;
+    console.log(mode);
     let bw = mode === 'single' ? window.innerHeight : bRect.width;
     let bh = mode === 'single' ? window.innerWidth : bRect.height;
 
     // Starting Point : random, avoid center(player protection)
-    const downside = bRect.top + d;//Math.random() * (bh / d) + (bh * (d - 1) / d) - 70;
-    const upside = bRect.bottom - d;//Math.random() * (bh / d) + 70;
+    const downside = bh - d - 50;//Math.random() * (bh / d) + (bh * (d - 1) / d) - 70;
+    const upside = bRect.top + d + 50;//Math.random() * (bh / d) + 70;
     const randomSeed = Math.random() * 2 < 1 ? upside : downside;
     dots.style.top = Math.floor(randomSeed) + 'px';
-    dots.style.left = Math.floor(Math.random() * (bh - 150) + 75 + bRect.left) + 'px';
+    dots.style.left = Math.floor(Math.random() * (bw - 300) + 150 + bRect.left) + 'px';
 
     // coloring
     if (!bonus) dots.style.backgroundColor = world.colorSeed[speedX];

@@ -131,6 +131,9 @@ const gameLogic = (function () {
     const divider = 300;
     const dotN = 3;
 
+    let sWidth;
+    let sHeight;
+
     // Set init width,height before game start.
     if (!start) {
       sWidth = mode === 'single' ? width : bRect.width;

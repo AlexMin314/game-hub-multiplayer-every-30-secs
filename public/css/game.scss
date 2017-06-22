@@ -2,12 +2,20 @@
 html {
   font-family: sans-serif, helvetica;
   background-color: black;
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  overflow-style: none;
 }
 
 body {
   background-color: rgba(255, 255, 255, 0);
   line-height: 1.2;
   font-family: inherit;
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  overflow-style: none;
 }
 
 *::-webkit-media-controls-start-playback-button {

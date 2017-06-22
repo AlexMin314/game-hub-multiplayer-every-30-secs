@@ -6,10 +6,10 @@ const gameSpawn = (function () {
 
   const trigger = (settings, world) => {
     // Remove start screen.
-    if (settings.mode === 'single') {
-      const wrapper = document.getElementById('wrapper');
-      gameBoard.removeChild(wrapper);
-    }
+    //if (settings.mode === 'single') {
+    const wrapper = document.getElementById('wrapper');
+    gameBoard.removeChild(wrapper);
+    //}
 
     world.start = true;
 
@@ -19,6 +19,7 @@ const gameSpawn = (function () {
     // Initial dot spawn.
     for (var k = 0; k < settings.roundStart; k++) {
       dotSpawner(settings, world, false);
+      console.log('here is k:' + k);
     }
 
     // Line event triggering.
