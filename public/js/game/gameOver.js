@@ -14,8 +14,8 @@ const gameOverAndResult = (settings, world, data) => {
   const gameBoard = document.getElementById('board');
 
   // Get rank info.
-  let rankArr = getScoreRank();
-  rankArr = rankArr.slice(0, 5);
+  // let rankArr = getScoreRank();
+  // rankArr = rankArr.slice(0, 5);
 
   // Removing dot elements.
   gameBoard.innerHTML = '';
@@ -23,7 +23,7 @@ const gameOverAndResult = (settings, world, data) => {
   // Clear beep sound.
   clearInterval(world.thirtySecBeep);
 
-  // Play game over sound
+  // Play game over sound ---------
   if (world.sound) utility.bgSound(world, gameLogic.gameOverChk());
 
   // Appending Wrapper to game board for game over screen.
@@ -36,16 +36,27 @@ const gameOverAndResult = (settings, world, data) => {
 
   // Appending gameOverDiv to the wrapper
   const gameOverDiv = utility.appendTo('div', wrapper, 'gameOver');
-  gameOverDiv.style.paddingTop = '30px';
-  rankArr.forEach((e, i) => {
-    utility.appendTo('p', gameOverDiv, 'rank' + i);
-    const rankList = document.getElementById('rank' + i);
-    rankList.innerHTML = '# ' + (i + 1) + ' ';
-    rankList.innerHTML += e.name + ' ';
-    rankList.innerHTML += e.score;
-  });
+  gameOverDiv.innerHTML = 'GAME OVER';
+
+  const gameOverRank = (res) => {
+    gameOverDiv.innerHTML = '';
+    gameOverDiv.style.paddingTop = '30px';
+    res.forEach((e, i) => {
+      setTimeout(() => {
+        utility.appendTo('p', gameOverDiv, 'rank' + i);
+        const rankList = document.getElementById('rank' + i);
+        rankList.className = 'fadeInUp';
+        rankList.innerHTML = '# ' + (i + 1) + ' ';
+        rankList.innerHTML += e.name + ' ';
+        rankList.innerHTML += e.score;
+      }, 200 * i);
+    });
+  };
 
   // ====> Leader Board!! here??
+  setTimeout(() => {
+    getScoreRank(gameOverRank);
+  }, 1000);
 
 
   // Appending retryDiv to the wrapper

@@ -104,6 +104,8 @@ const layout = (function () {
     const interval = 700;
 
     setTimeout(() => {
+      startButtonText.style.border = '0px';
+      
       startButtonText.innerHTML = 'EVERY<br>30 SECS';
     }, interval * 0);
 
@@ -115,7 +117,6 @@ const layout = (function () {
 
       startButtonText.style.fontSize = '200px';
       startButtonText.style.paddingTop = '0px';
-      startButtonText.style.border = '0px';
 
       // Counting sound play.
       utility.startCountBeep(world, startButtonText, '3');

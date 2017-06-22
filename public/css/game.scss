@@ -156,6 +156,7 @@ video {
   width: 300px;
   margin: 0 auto 30px;
   border: 0px;
+  padding-top: 10px;
 }
 
 #gameOver p {
@@ -170,6 +171,7 @@ video {
   margin-left: 20px;
   padding-top: 7px;
   padding-left: 20px;
+  border-radius: 7px;
 }
 
 #gameOver p:hover {
@@ -240,4 +242,22 @@ video {
 #retry:hover {
   color: rgb(255, 0, 153);
   font-weight: bold;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fadeInUp {
+  animation-name: fadeInUp;
+  animation-duration: 1s;
+  animation-fill-mode: both;
 }

@@ -17,28 +17,29 @@ const postScore = function (data, game) {
 
 };
 
-const getScoreRank = function () {
+const getScoreRank = function (next) {
 
   const xhr = new XMLHttpRequest();
-  // let res;
-  // xhr.open('GET', '/game/get/score', true);
-  xhr.open('GET', '/game/get/score', false);
 
-  // xhr.onload = function () {
-  //   if (xhr.status >= 200 && xhr.status < 400) {
-  //     // Success!
-  //     res = xhr.responseText;
-  //     console.log(res);
-  //   } else {
-  //     // We reached our target server, but it returned an error
-  //
-  //   }
-  // };
-  //
-  // xhr.onerror = function () {
-  //   // There was a connection error of some sort
-  // };
+  xhr.open('GET', '/game/get/score', true);
+  // xhr.open('GET', '/game/get/score', false);
+
+  xhr.onload = function () {
+    if (xhr.status >= 200 && xhr.status < 400) {
+      // Success!
+      res = JSON.parse(xhr.responseText);
+      res = res.slice(0,5);
+      next(res);
+    } else {
+      // We reached our target server, but it returned an error
+
+    }
+  };
+
+  xhr.onerror = function () {
+    // There was a connection error of some sort
+  };
   xhr.send();
 
-  return JSON.parse(xhr.responseText);
+  // return JSON.parse(xhr.responseText);
 };

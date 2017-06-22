@@ -26,9 +26,7 @@ const Player = function (settings, world) {
 
     // Reducing approach speed when the cursor and playerDot are closer.
     let nextX = pX + (mouse.x - 25 - pX) / settings.playerDotSpeed;
-    nextX = Math.floor(nextX);
     let nextY = pY + (mouse.y - 25 - pY) / settings.playerDotSpeed;
-    nextY = Math.floor(nextY);
 
     // Set new Coordinates for next frame.
     playerDot.style.left = nextX + "px";

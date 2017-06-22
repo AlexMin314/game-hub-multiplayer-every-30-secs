@@ -119,21 +119,21 @@ const gameLogic = (function() {
       startWidth = width;
       startHeight = height;
       let multi = Math.floor(width / divider) + 1;
-      settings.roundStart = multi;
+      //settings.roundStart = multi;
       settings.roundStartMax = multi * dotN;
     }
 
     // Detecting changes on resolution after game start.
     if (start && (startWidth !== width || startHeight !== height)) {
       let multi = Math.floor(width / divider) + 1;
-      settings.roundStart = multi;
+      //settings.roundStart = multi;
       settings.roundStartMax = multi * dotN;
       if (width <= 600 && height < 600) {
-        settings.roundStart = multi - dotN;
+        //settings.roundStart = multi - dotN;
         settings.roundStartMax = multi * dotN - dotN;
       }
       if (width <= 600 && height > 600) {
-        settings.roundStart = multi + dotN;
+        //settings.roundStart = multi + dotN;
         settings.roundStartMax = multi * dotN + dotN;
       }
       startWidth = width;

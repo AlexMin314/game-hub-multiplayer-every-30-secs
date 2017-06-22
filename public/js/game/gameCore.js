@@ -7,7 +7,7 @@ const Game = function (data, mode) {
   settings.frame = 0;
   settings.mode = mode; //game mode
   // Dots(emeny).
-  settings.roundStart = 3; // num
+  settings.roundStart = 2; // num
   settings.roundStartMax = 18; // num
   settings.roundUpSpawn = 1; // num
   settings.speedScale = 1.0; // multiplyer
