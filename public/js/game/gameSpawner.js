@@ -6,8 +6,11 @@ const gameSpawn = (function () {
 
   const trigger = (settings, world) => {
     // Remove start screen.
-    const wrapper = document.getElementById('wrapper');
-    gameBoard.removeChild(wrapper);
+    if (settings.mode === 'single') {
+      const wrapper = document.getElementById('wrapper');
+      gameBoard.removeChild(wrapper);
+    }
+
     world.start = true;
 
     // Display Score + Dot number.
@@ -17,16 +20,6 @@ const gameSpawn = (function () {
     for (var k = 0; k < settings.roundStart; k++) {
       dotSpawner(settings, world, false);
     }
-
-    // Dot spwan.
-    // setInterval(() => {
-    //   if (!world.pause) spawnDraw(settings, world, false);
-    // }, settings.spawnSpeed);
-
-    // Bonuse spwan.
-    // setInterval(() => {
-    //   if (!world.pause) spawnDraw(settings, world, true);
-    // }, settings.bonusSpawnSpeed);
 
     // Line event triggering.
     setTimeout(() => {
@@ -39,18 +32,11 @@ const gameSpawn = (function () {
 
       if (world.sound) beep.play();
 
-      // Speed Scale effective on only new spawn dot.
-      // settings.speedScale += 0.05;
-
       // Addtional emeny dot spawn every 60 secs.
       world.addChk++;
       if (window.innerWidth > 600 && world.addChk % 2 === 0) settings.roundStartMax++;
     }, world.thirtySec);
 
-    // Score Tracking.
-    // setInterval(function () {
-    //   world.score++;
-    // }, 1000)
   };
 
   // Dot enemy spawn(bonus: false) | Bonus Spawn(bonus: ture)

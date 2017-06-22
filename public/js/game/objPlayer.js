@@ -20,7 +20,7 @@ const Player = function (settings, world) {
   // Draw Player move
   this.drawPlayerMove = function (mouse) {
     // Sync current position.
-    pRect = playerDot.getBoundingClientRect();
+    const pRect = playerDot.getBoundingClientRect();
     pX = pRect.left;
     pY = pRect.top;
 
@@ -28,12 +28,14 @@ const Player = function (settings, world) {
     let nextX = pX + (mouse.x - 25 - pX) / settings.playerDotSpeed;
     let nextY = pY + (mouse.y - 25 - pY) / settings.playerDotSpeed;
 
+    //if (nextX < )
+
     // Set new Coordinates for next frame.
     playerDot.style.left = nextX + "px";
     playerDot.style.top = nextY + "px";
 
     // Set wall boundary to player controller
-    gameLogic.wall.apply(playerDot);
+    gameLogic.wall.call(playerDot, settings);
   };
 
   // Return Coordinate for public usage

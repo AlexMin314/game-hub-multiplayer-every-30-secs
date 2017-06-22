@@ -6,6 +6,7 @@ const mainRoom = (function () {
   const gloalChat = document.getElementById('globalChat');
 
   const star = document.getElementById('star1');
+  const star1 = document.getElementById('star2');
   const clicked = document.getElementById('clicked');
   const beepSound = document.getElementById('counter');
   beepSound.volume = '0.5';
@@ -193,7 +194,7 @@ const mainRoom = (function () {
     }
     if (from === 'player2' && player1 === true) {
       gamechk2 = true;
-      star.play();
+      star1.play();
       ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
       ready2.style.paddingTop = '45px';
       ready2.innerHTML = 'GAME<br>READY';
@@ -396,6 +397,7 @@ const mainRoom = (function () {
       msg.className = 'startText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;
+      beepSound.play();
     }, 1000);
     setTimeout(() => {
       let msg = document.createElement('div');
@@ -403,6 +405,7 @@ const mainRoom = (function () {
       msg.className = 'startText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;
+      beepSound.play();
     }, 2000);
     setTimeout(() => {
       let msg = document.createElement('div');
@@ -410,21 +413,25 @@ const mainRoom = (function () {
       msg.className = 'startText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;
+      beepSound.play();
     }, 3000);
     setTimeout(() => {
       let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start !!!';
+      msg.innerHTML = 'Game Start ...';
       msg.className = 'startText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;
+      beepSound.play();
     }, 4000);
     setTimeout(() => {
-      socket.emit('multiplay starter');
+      const player = player1 ? 'player1' : 'player2';
+      socket.emit('multiplay starter', player);
     }, 5000);
   });
 
   gameStart(socket);
   // scoreSockets(socket);
+  // gameOverAndResult(socket);
 
   return {
     socket: socket

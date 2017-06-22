@@ -6,13 +6,13 @@ module.exports = (io) => {
 
   io.on('connection', (socket) => {
     console.log('==User connected: ', socket.id);
-    let user = {};
+    const user = {};
 
 
     // reassign socket value with passport data.
     if (socket.request.user.logged_in) {
       socket.userName = socket.request.user.profile.name;
-      socket.roomName = '';
+      user.roomName = '';
       //socket.userId = socket.request.user.id;
       user.name = socket.userName;
       user.guest = false;
@@ -34,6 +34,18 @@ module.exports = (io) => {
 
 
     io.emit('update user', users);
+
+    /**
+     * Message
+     */
+
+    socket.on('newMessage', (data) => {
+      io.to(user.roomName).emit('broadcast message', data, socket.userName);
+    });
+
+    /**
+     * Invitation and Matchroom
+     */
 
     socket.on('invitation', (userid) => {
       users.forEach((e) => {
@@ -57,23 +69,20 @@ module.exports = (io) => {
       });
     });
 
-    socket.on('newMessage', (data) => {
-      io.to(socket.roomName).emit('broadcast message', data, socket.userName);
-    });
 
     socket.on('enter lobby', () => {
       socket.join('lobby');
-      socket.roomName = 'lobby';
+      user.roomName = 'lobby';
     });
 
     socket.on('join gameRoom', (roomNum) => {
-      socket.roomName = roomNum;
+      user.roomName = roomNum;
       socket.leave('lobby');
       socket.join(roomNum);
     });
 
     socket.on('invitation confirmed', (roomNum, host) => {
-      socket.roomName = roomNum;
+      user.roomName = roomNum;
       socket.leave('lobby');
       socket.join(roomNum);
 
@@ -121,6 +130,10 @@ module.exports = (io) => {
       io.to(to.socketId).emit('exit room', path);
     });
 
+    /**
+     * Game
+     */
+
     socket.on('singleplay starter', () => {
       const miniData = {};
       miniData.id = user.id;
@@ -134,10 +147,37 @@ module.exports = (io) => {
       miniData.id = user.id;
       miniData.name = user.name;
       miniData.guest = user.guest;
+      miniData.room = user.roomName;
+
       io.to(socket.id).emit('multiplay start', miniData);
     });
 
-    // game result
+    socket.on('resolution post', (width, height, data) => {
+      users.forEach((e) => {
+        if (data.room === e.roomName && data.id !== e.id) {
+          io.to(e.socketId).emit('resolution fixer', width, height);
+        }
+      });
+    });
+
+    // socket.on('gameOver deliver', (loser, settings, world) => {
+    //   const roster = users.filter((e) => {
+    //     return e.roomName === loser.room;
+    //   });
+    //   let winner;
+    //   roster.forEach((e) => {
+    //     if (e.id !== loser.id) {
+    //       winner = e;
+    //     }
+    //   });
+    //   io.to(loser.socketId).emit('gameOver post', loser, settings, world, 'lose');
+    //   io.to(winner.socketId).emit('gameOver post', winner, settings, world, 'win');
+    // });
+
+
+    /**
+     * Score
+     */
 
     socket.on('postScore', (gameResult) => {
       gameController.postScoreSocket(gameResult);
@@ -149,6 +189,11 @@ module.exports = (io) => {
       });
     })
 
+
+
+    /**
+     * [disconnect description]
+     */
 
     socket.on('disconnect', (socket) => {
       console.log('==User disconnect: ', user.name);

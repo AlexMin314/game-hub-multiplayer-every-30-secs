@@ -1,4 +1,4 @@
-const Game = function (data, mode, player) {
+const Game = function (data, mode, player, socket) {
 
   /* Game settings */
 
@@ -6,19 +6,20 @@ const Game = function (data, mode, player) {
   settings.FPS = 60;
   settings.frame = 0;
   settings.mode = mode; //game mode
+  settings.player = player; // 'player1', 'player2'
   // Dots(emeny).
   settings.roundStart = 2; // num
   settings.roundStartMax = 18; // num
   settings.roundUpSpawn = 1; // num
   settings.speedScale = 1.0; // multiplyer
-  settings.spawnSpeed = 3000; // ms
-  settings.spawnSpeed = ( settings.spawnSpeed / 1000 * settings.FPS );
+  settings.spawnSpeed = 5000; // ms
+  settings.spawnSpeed = (settings.spawnSpeed / 1000 * settings.FPS);
   settings.bounceBuffer = 10; // px
   // Bonus(star).
   settings.bonusSpawn = 1; // num
   settings.bonusMax = 2; // num
-  settings.bonusSpawnSpeed = 4000; // ms
-  settings.bonusSpawnSpeed = ( settings.bonusSpawnSpeed / 1000 * settings.FPS );
+  settings.bonusSpawnSpeed = 5000; // ms
+  settings.bonusSpawnSpeed = (settings.bonusSpawnSpeed / 1000 * settings.FPS);
   // Player related
   settings.playerDotSpeed = 20; // lower = faster respond
   // Debug mode - don't touch.
@@ -58,6 +59,7 @@ const Game = function (data, mode, player) {
   world.score = 0;
   world.pause = false;
   world.pauseLimit = 3;
+  if (settings.mode !== 'single') world.pauseLimit = 0;
   world.sound = true;
   world.spaceBar = false;
   world.clickSound = null;
@@ -74,24 +76,24 @@ const Game = function (data, mode, player) {
 
   // Caching div info.
   var divs = {};
+  divs.gameBoard = null;
   divs.scoreBoard = null;
   divs.dotNumBoard = null;
   divs.startButtonText = null;
   divs.theWrapper = null;
   divs.player = null;
 
-
   /* Board init start!!!!! */
 
   // Display Start Button.
-  layout.startBtn();
+  if (settings.mode === 'single') layout.startBtn();
 
   // Background sound play
   utility.bgSound(world, gameLogic.gameOverChk());
 
   // Append some sound effect
   //utility.audio('star1', './src/star.mp3', false, false);
-  utility.audio('star2', './src/star.mp3', false, false);
+  //utility.audio('star2', './src/star.mp3', false, false);
   //utility.audio('counter', './src/count.mp3', false, false);
   //utility.audio('clicked', './src/clicked.mp3', false, false);
   world.clickSound = document.getElementById('clicked');
@@ -99,38 +101,75 @@ const Game = function (data, mode, player) {
   world.star2 = document.getElementById('star2');
 
   // *Game Starting* Flow after start button click.
-  function startClick(e) {
-    // Removing click events.
-    document.getElementById('gameStart').removeEventListener('click', startClick, false);
 
-    // click sound
-    if (world.sound) world.clickSound.play();
+  if (settings.mode === 'single') {
+    function startClick(e) {
+      // Removing click events.
+      document.getElementById('gameStart').removeEventListener('click', startClick, false);
 
-    divs.theWrapper = document.getElementById('wrapper');
-    divs.startButtonText = document.getElementById('gameStart');
+      // click sound
+      if (world.sound) world.clickSound.play();
 
-    // Removing sound, debug button.
-    divs.theWrapper.removeChild(document.getElementById('sound'));
-    divs.theWrapper.removeChild(document.getElementById('godmode'));
+      divs.theWrapper = document.getElementById('wrapper');
+      divs.startButtonText = document.getElementById('gameStart');
 
-    // Difficulty re-setting base on width when game start.
-    gameLogic.difficulty(settings, false, window.innerWidth, window.innerHeight);
+      // Removing sound, debug button.
+      divs.theWrapper.removeChild(document.getElementById('sound'));
+      divs.theWrapper.removeChild(document.getElementById('godmode'));
 
-    // Showing start messages.
-    layout.tutorial(divs.startButtonText, world);
+      // Difficulty re-setting base on width when game start.
+      gameLogic.difficulty(settings, false, window.innerWidth, window.innerHeight);
 
-    // setTimeout for waiting tutorial ends.
-    setTimeout(function () {
-      // Player Spawn.
+      // Showing start messages.
+      layout.tutorial(divs.startButtonText, world);
+
+      // setTimeout for waiting tutorial ends.
+      setTimeout(function () {
+        // Player Spawn.
+        gameSpawn.playerSpawner(settings, world);
+        divs.player = document.getElementById('playerDot1');
+
+        //Removing start button and start game.
+        gameSpawn.trigger(settings, world);
+
+        divs.scoreBoard = document.getElementById('score');
+        divs.dotNumBoard = document.getElementById('dotNum');
+      }, 3100);
+    }
+  }
+
+  if (settings.mode === 'multi') {
+    // find smaller resolution and fix game board!
+    const board = document.getElementById('board');
+
+    socket.emit('resolution post', window.innerWidth, window.innerHeight, data);
+
+    socket.on('resolution fixer', (width, height) => {
+      const boardWidth = window.innerWidth > width ? width : window.innerWidth;
+      const boardHeight = window.innerHeight > height ? height : window.innerHeight;
+      board.style.width = boardWidth + 'px';
+      board.style.height = boardHeight + 'px';
+      board.style.border = '3px solid orange';
+      board.style.margin = '0 auto';
+      if (window.innerHeight > height) {
+        const top = (window.innerHeight - boardHeight - 10) / 2;
+        board.style.marginTop = top + 'px';
+      }
+    });
+
+
+    setTimeout(() => {
       gameSpawn.playerSpawner(settings, world);
       divs.player = document.getElementById('playerDot1');
 
-      //Removing start button and start game.
+      // setTimeout for waiting tutorial ends.
+      gameLogic.difficulty(settings, false, window.innerWidth, window.innerHeight);
       gameSpawn.trigger(settings, world);
 
       divs.scoreBoard = document.getElementById('score');
       divs.dotNumBoard = document.getElementById('dotNum');
-    }, 3100);
+    }, 300);
+
   }
 
 
@@ -155,16 +194,16 @@ const Game = function (data, mode, player) {
         gameSpawn.spawnDraw(settings, world, false);
       }
 
-      if (!world.pause
-          && settings.frame % settings.bonusSpawnSpeed === 0
-          && settings.frame > 200) {
+      if (!world.pause &&
+        settings.frame % settings.bonusSpawnSpeed === 0 &&
+        settings.frame > 200) {
         gameSpawn.spawnDraw(settings, world, true);
       }
 
     }
 
     // anti-cheat.
-    if (settings.frame % 180 === 0) {
+    if (settings.frame % 180 === 0 && settings.mode === 'single') {
       gameLogic.difficulty(settings, true, window.innerWidth, window.innerHeight);
     }
 
@@ -177,10 +216,13 @@ const Game = function (data, mode, player) {
 
   (function () {
     document.addEventListener('mousemove', event.getMousePos, false);
-    document.addEventListener('keydown', event.gamePause, false);
-    document.getElementById('gameStart').addEventListener('click', startClick, false);
-    document.getElementById('sound').addEventListener('click', event.soundBtn, false);
-    document.getElementById('godmode').addEventListener('click', event.godBtn, false);
+    if (settings.mode === 'single') {
+      document.addEventListener('keydown', event.gamePause, false);
+      document.getElementById('gameStart').addEventListener('click', startClick, false);
+      document.getElementById('sound').addEventListener('click', event.soundBtn, false);
+      document.getElementById('godmode').addEventListener('click', event.godBtn, false);
+    }
   }());
+
 
 };

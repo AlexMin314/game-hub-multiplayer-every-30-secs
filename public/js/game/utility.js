@@ -57,6 +57,7 @@ const utility = (function () {
   }());
 
   return {
+    board: divInfo.gameBoard,
     appendTo: appendTo,
     audio: audioTagHelper,
     bgSound: backgroundSound,

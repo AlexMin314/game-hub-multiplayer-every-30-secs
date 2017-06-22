@@ -1,4 +1,4 @@
-const gameLogic = (function() {
+const gameLogic = (function () {
 
   let gameoverChecker = false;
   let startWidth = 0;
@@ -10,7 +10,7 @@ const gameLogic = (function() {
   };
 
   // Collision detection of Player Pattern.
-  const collision = function(arr, world, settings, gameOver, bonus, data) {
+  const collision = function (arr, world, settings, gameOver, bonus, data) {
     // Player coordinate.
     let xThis = Math.floor(this.showInfo().x);
     let yThis = Math.floor(this.showInfo().y);
@@ -33,6 +33,7 @@ const gameLogic = (function() {
           // Game over.
           gameoverChecker = true;
           gameOverAndResult(settings, world, data);
+
         }
 
         // Bonus collision (Circle).
@@ -65,6 +66,7 @@ const gameLogic = (function() {
           // Gameover
           gameoverChecker = true;
           gameOverAndResult(settings, world, data);
+
         }
       }
     }
@@ -78,14 +80,25 @@ const gameLogic = (function() {
   };
 
   // Gives wall limit to target(player).
-  const wall = function() {
+  const wall = function (settings) {
     const rect = this.getBoundingClientRect();
-    const w = Math.floor(window.innerWidth);
-    const h = Math.floor(window.innerHeight);
+    const r = rect.width / 2;
+
+    const bRect = utility.board.getBoundingClientRect();
+    const mode = settings.mode;
+    const buffer = settings.bounceBuffer;
+
+    let ww = mode === 'single' ? window.innerWidth : bRect.width;
+    ww += bRect.left;
+    let hh = mode === 'single' ? window.innerHeight : bRect.height;
+    hh += bRect.top;
+
+    const w = Math.floor(ww);
+    const h = Math.floor(hh);
     // Wall condition.
     if (rect.bottom > h) this.style.top = (h - rect.height) + 'px';
-    if (rect.top < 0) this.style.top = '0px';
-    if (rect.left < 0) this.style.left = '0px';
+    if (rect.top < bRect.top + buffer) this.style.top = bRect.top + 'px';
+    if (rect.left < bRect.left + buffer) this.style.left = bRect.left + 'px';
     if (rect.right > w) this.style.left = (w - rect.width) + 'px';
   };
 
@@ -111,20 +124,24 @@ const gameLogic = (function() {
 
   // Game diffculty setting + anti-cheat.
   const difficulty = (settings, start, width, height) => {
+
+    const bRect = utility.board.getBoundingClientRect();
+    const mode = settings.mode;
+
     const divider = 300;
     const dotN = 3;
 
     // Set init width,height before game start.
     if (!start) {
-      startWidth = width;
-      startHeight = height;
+      sWidth = mode === 'single' ? width : bRect.width;
+      sHeight = mode === 'single' ? height : bRect.height;
       let multi = Math.floor(width / divider) + 1;
       //settings.roundStart = multi;
-      settings.roundStartMax = multi * dotN;
+      // settings.roundStartMax = multi * dotN;
     }
 
     // Detecting changes on resolution after game start.
-    if (start && (startWidth !== width || startHeight !== height)) {
+    if (start && (sWidth !== width || sHeight !== height)) {
       let multi = Math.floor(width / divider) + 1;
       //settings.roundStart = multi;
       settings.roundStartMax = multi * dotN;
@@ -136,8 +153,8 @@ const gameLogic = (function() {
         //settings.roundStart = multi + dotN;
         settings.roundStartMax = multi * dotN + dotN;
       }
-      startWidth = width;
-      startHeight = height;
+      sWidth = width;
+      sHeight = height;
     }
   };
 

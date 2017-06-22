@@ -24,15 +24,18 @@ const Dots = function (dotNum, settings, world, bonus) {
 
     // distance from the center
     const d = world.spawnDist;
-    const h = window.innerHeight;
-    const w = window.innerWidth;
+    const bRect = utility.board.getBoundingClientRect();
+
+    const mode = settings.mode;
+    let bw = mode === 'single' ? window.innerHeight : bRect.width;
+    let bh = mode === 'single' ? window.innerWidth : bRect.height;
 
     // Starting Point : random, avoid center(player protection)
-    const downside = Math.random() * (h / d) + (h * (d - 1) / d) - 70;
-    const upside = Math.random() * (h / d) + 70;
+    const downside = bRect.top + d;//Math.random() * (bh / d) + (bh * (d - 1) / d) - 70;
+    const upside = bRect.bottom - d;//Math.random() * (bh / d) + 70;
     const randomSeed = Math.random() * 2 < 1 ? upside : downside;
     dots.style.top = Math.floor(randomSeed) + 'px';
-    dots.style.left = Math.floor(Math.random() * (w - 150) + 75) + 'px';
+    dots.style.left = Math.floor(Math.random() * (bh - 150) + 75 + bRect.left) + 'px';
 
     // coloring
     if (!bonus) dots.style.backgroundColor = world.colorSeed[speedX];
@@ -41,22 +44,30 @@ const Dots = function (dotNum, settings, world, bonus) {
 
   // Drawing dot movement
   this.drawDotMove = function () {
-    var dRect = dots.getBoundingClientRect();
+    const dRect = dots.getBoundingClientRect();
     x = dRect.left;
     y = dRect.top;
     radius = dRect.width / 2;
 
+    const bRect = utility.board.getBoundingClientRect();
+
+    const mode = settings.mode;
+    let bWidth = mode === 'single' ? window.innerWidth : bRect.width;
+    bWidth += bRect.left;
+    let bHeight = mode === 'single' ? window.innerHeight : bRect.height;
+    bHeight += bRect.top;
+
     // Wall bouncing
-    if (x + dx > window.innerWidth - dRect.width - settings.bounceBuffer) {
+    if (x + dx > bWidth - dRect.width - settings.bounceBuffer) {
       dx = -dx;
-      x = window.innerWidth - dRect.width - settings.bounceBuffer;
+      x = bWidth - dRect.width - settings.bounceBuffer;
     }
-    if (y + dy > window.innerHeight - dRect.width - settings.bounceBuffer) {
+    if (y + dy > bHeight - dRect.width - settings.bounceBuffer) {
       dy = -dy;
-      y = window.innerHeight - dRect.width - settings.bounceBuffer;
+      y = bHeight - dRect.width - settings.bounceBuffer;
     }
-    if (x + dx < settings.bounceBuffer) dx = -dx;
-    if (y + dy < settings.bounceBuffer) dy = -dy;
+    if (x + dx < settings.bounceBuffer + bRect.left) dx = -dx;
+    if (y + dy < settings.bounceBuffer + bRect.top) dy = -dy;
     x += dx;
     y += dy;
     dots.style.left = x + 'px';
