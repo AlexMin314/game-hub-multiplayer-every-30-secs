@@ -134,7 +134,7 @@ module.exports = (io) => {
      * Game
      */
 
-    socket.on('singleplay starter', () => {
+    socket.on('singleplay starter', (player) => {
       const miniData = {};
       miniData.id = user.id;
       miniData.name = user.name;
@@ -142,14 +142,19 @@ module.exports = (io) => {
       io.to(socket.id).emit('singleplay start', miniData);
     });
 
-    socket.on('multiplay starter', () => {
+    socket.on('multiplay starter', (player) => {
       const miniData = {};
       miniData.id = user.id;
       miniData.name = user.name;
       miniData.guest = user.guest;
       miniData.room = user.roomName;
 
-      io.to(socket.id).emit('multiplay start', miniData);
+      const roster = [];
+      users.forEach((e) => {
+        if(e.roomName === miniData.room) roster.push(e);
+      });
+
+      io.to(socket.id).emit('multiplay start', miniData, roster);
     });
 
     socket.on('resolution post', (width, height, data) => {
@@ -160,19 +165,14 @@ module.exports = (io) => {
       });
     });
 
-    // socket.on('gameOver deliver', (loser, settings, world) => {
-    //   const roster = users.filter((e) => {
-    //     return e.roomName === loser.room;
-    //   });
-    //   let winner;
-    //   roster.forEach((e) => {
-    //     if (e.id !== loser.id) {
-    //       winner = e;
-    //     }
-    //   });
-    //   io.to(loser.socketId).emit('gameOver post', loser, settings, world, 'lose');
-    //   io.to(winner.socketId).emit('gameOver post', winner, settings, world, 'win');
-    // });
+    socket.on('gameOver deliver', (loser, winner, rosterArr, world) => {
+      //console.log('loser' + loser.socketId);
+      io.to(winner.socketId).emit('get winnerInfo', winner, rosterArr, 'win');
+      io.to(loser.socketId).emit('gameOver post', loser, rosterArr, 'lose', world);
+    });
+    socket.on('winner gameover', (winner, rosterArr, status, world) => {
+      io.to(winner.socketId).emit('gameOver post', winner, rosterArr, 'win', world);
+    });
 
 
     /**

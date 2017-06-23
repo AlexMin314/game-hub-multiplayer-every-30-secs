@@ -4,17 +4,31 @@ const gameLogic = (function () {
   let startWidth = 0;
   let startHeight = 0;
   const gameBoard = document.getElementById('board');
+  let roster;
 
   const gameOverChk = () => {
     return gameoverChecker;
   };
 
   // Collision detection of Player Pattern.
-  const collision = function (arr, world, settings, gameOver, bonus, data) {
+  const collision = function (arr, world, settings, gameOver, bonus, curPlayer, rosterArr) {
+
+    roster = rosterArr;
+    let loser;
+    let winner;
+
+    if (settings.mode === 'multi') {
+      roster.forEach((e) => {
+        if(e.id !== curPlayer.id) winner = e;
+        if(e.id === curPlayer.id) loser = e;
+      });
+    }
+
     // Player coordinate.
     let xThis = Math.floor(this.showInfo().x);
     let yThis = Math.floor(this.showInfo().y);
     let pRadius = Math.floor(this.showInfo().radius);
+    const mode = settings.mode;
 
     // Checking debug mode and game over or not.
     if (!gameoverChecker) {
@@ -32,8 +46,8 @@ const gameLogic = (function () {
           !settings.godmode) {
           // Game over.
           gameoverChecker = true;
-          gameOverAndResult(settings, world, data);
-
+          if (mode === 'single') gameOverAndResult(settings, world, curPlayer);
+          if (mode === 'multi') mainRoom.socket.emit('gameOver deliver', loser, winner, rosterArr, world);
         }
 
         // Bonus collision (Circle).
@@ -65,8 +79,8 @@ const gameLogic = (function () {
         if (distA + distB < colRange) {
           // Gameover
           gameoverChecker = true;
-          gameOverAndResult(settings, world, data);
-
+          if (mode === 'single') gameOverAndResult(settings, world, curPlayer);
+          if (mode === 'multi') mainRoom.socket.emit('gameOver deliver', loser, winner, rosterArr, world);
         }
       }
     }

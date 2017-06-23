@@ -1,4 +1,4 @@
-const Game = function (data, mode, player, socket) {
+const Game = function (data, mode, rosterArr, socket) {
 
   /* Game settings */
 
@@ -6,7 +6,7 @@ const Game = function (data, mode, player, socket) {
   settings.FPS = 60;
   settings.frame = 0;
   settings.mode = mode; //game mode
-  settings.player = player; // 'player1', 'player2'
+  settings.playerList = rosterArr; // ['player1', 'player2']
   // Dots(emeny).
   settings.roundStart = 2; // num
   settings.roundStartMax = 18; // num
@@ -37,7 +37,7 @@ const Game = function (data, mode, player, socket) {
   world.dotList = [];
   world.dotNumIdx = 0;
   world.dotLength = 0;
-  world.spawnDist = 70;
+  world.spawnDist = 50;
   world.colorSeed = [null, null, '#14ff00', '#00fff7', '#faff00', '#ff00de'];
   world.addChk = 0;
   // Bonus(Star).
@@ -63,6 +63,7 @@ const Game = function (data, mode, player, socket) {
   world.sound = true;
   world.spaceBar = false;
   world.clickSound = null;
+  world.gameover = false;
 
   // Controller.
   var mouse = {};
@@ -163,14 +164,15 @@ const Game = function (data, mode, player, socket) {
       gameSpawn.playerSpawner(settings, world);
       divs.player = document.getElementById('playerDot1');
 
-      // setTimeout for waiting tutorial ends.
-      gameLogic.difficulty(settings, false, window.innerWidth, window.innerHeight);
-      gameSpawn.trigger(settings, world);
+      setTimeout(() => {
+        // setTimeout for waiting tutorial ends.
+        gameLogic.difficulty(settings, false, window.innerWidth, window.innerHeight);
+        gameSpawn.trigger(settings, world, settings.playerList);
 
-      divs.scoreBoard = document.getElementById('score');
-      divs.dotNumBoard = document.getElementById('dotNum');
-
-    }, 500);
+        divs.scoreBoard = document.getElementById('score');
+        divs.dotNumBoard = document.getElementById('dotNum');
+      }, 500);
+    }, 100);
 
   }
 
@@ -183,8 +185,8 @@ const Game = function (data, mode, player, socket) {
     settings.frame++;
 
     // Checking start:true, pause:false, gameoverChecker: false.
-    if (world.start && !world.pause && !gameLogic.gameOverChk()) {
-      drawMovements(settings, world, mouse, data);
+    if (world.start && !world.pause && !gameLogic.gameOverChk() && !world.gameover) {
+      drawMovements(settings, world, mouse, data, settings.playerList);
 
       layout.updatingBoard(divs.scoreBoard, divs.dotNumBoard, world);
 
@@ -197,7 +199,7 @@ const Game = function (data, mode, player, socket) {
 
       if (!world.pause &&
         settings.frame % settings.bonusSpawnSpeed === 0 &&
-      settings.frame > 500) {
+      settings.frame > 100) {
         gameSpawn.spawnDraw(settings, world, true);
       }
 
@@ -210,6 +212,11 @@ const Game = function (data, mode, player, socket) {
 
   }());
 
+
+  mainRoom.socket.on('get winnerInfo', (curPlayer, rosterArr, status) => {
+    world.gameover = true;
+    socket.emit('winner gameover', curPlayer, rosterArr, status, world)
+  });
 
   /* Event Listener related */
 

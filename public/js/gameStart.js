@@ -1,15 +1,17 @@
 const gameStart = function(socket) {
 
-  socket.on('singleplay start', (data) => {
+  socket.on('singleplay start', (curPlayer) => {
     const container = document.getElementById('mainContainer')
     container.innerHTML = '';
-    Game(data, 'single', null, socket);
+    Game(curPlayer, 'single', null, socket);
   });
 
-  socket.on('multiplay start', (data, player) => {
+  socket.on('multiplay start', (curPlayer, rosterArr) => {
     const container = document.getElementById('mainContainer')
     container.innerHTML = '';
-    Game(data, 'multi', player, socket);
+    Game(curPlayer, 'multi', rosterArr, socket);
   });
 
 };
+
+//data, mode, rosterArr, socket

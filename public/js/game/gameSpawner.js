@@ -3,8 +3,12 @@
 const gameSpawn = (function () {
 
   const gameBoard = document.getElementById('board');
+  let rosterArr;
 
-  const trigger = (settings, world) => {
+  const trigger = (settings, world, roster) => {
+
+    rosterArr = roster;
+
     // Remove start screen.
     if (settings.mode === 'single') {
       const wrapper = document.getElementById('wrapper');
@@ -19,7 +23,6 @@ const gameSpawn = (function () {
     // Initial dot spawn.
     for (var k = 0; k < settings.roundStart; k++) {
       dotSpawner(settings, world, false);
-      console.log('here is k:' + k);
     }
 
     // Line event triggering.

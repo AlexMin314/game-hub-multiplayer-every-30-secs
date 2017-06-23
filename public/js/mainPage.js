@@ -209,7 +209,7 @@ const mainRoom = (function () {
     const inviteWindowDiv = document.createElement('div');
     inviteWindowDiv.id = 'inviteWindow';
     inviteWindowDiv.innerHTML = "<div class='col-xs-12'>You've got a<br>Match Invitation</div>";
-    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnC'><p>CONFIRM</p></div>";
+    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnC'><p>ACCEPT</p></div>";
     inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnD'><p>DECLINE</p></div>";
     gloChatInWrap.appendChild(inviteWindowDiv);
     beepSound.play(); // ding dong??
@@ -430,8 +430,7 @@ const mainRoom = (function () {
   });
 
   gameStart(socket);
-  // scoreSockets(socket);
-  // gameOverAndResult(socket);
+  gameFinish(socket);
 
   return {
     socket: socket
