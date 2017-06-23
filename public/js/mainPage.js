@@ -1,5 +1,6 @@
 const mainRoom = (function () {
   //http://192.168.219.166:3000
+  ////http://172.16.30.145:3000
 
   const socket = io.connect('/', { secure: true, transports: ['websocket'] });
   let gloChatInWrap = document.getElementById('globalChatInnerWrapper');
@@ -46,7 +47,7 @@ const mainRoom = (function () {
     }
     if (data === 'wait') {
       let msg = document.createElement('div');
-      msg.innerHTML = 'Invitaion Sent.';
+      msg.innerHTML = 'Invitation Sent.';
       msg.className = 'errorText';
       gloChatInWrap.appendChild(msg);
       gloChatInWrap.scrollTop = 1000;
