@@ -6,10 +6,10 @@ const gameSpawn = (function () {
 
   const trigger = (settings, world) => {
     // Remove start screen.
-    //if (settings.mode === 'single') {
-    const wrapper = document.getElementById('wrapper');
-    gameBoard.removeChild(wrapper);
-    //}
+    if (settings.mode === 'single') {
+      const wrapper = document.getElementById('wrapper');
+      utility.board.removeChild(wrapper);
+    }
 
     world.start = true;
 

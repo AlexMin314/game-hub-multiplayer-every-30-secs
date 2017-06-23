@@ -167,10 +167,10 @@ const Game = function (data, mode, player, socket) {
       gameLogic.difficulty(settings, false, window.innerWidth, window.innerHeight);
       gameSpawn.trigger(settings, world);
 
-    }, 300);
+      divs.scoreBoard = document.getElementById('score');
+      divs.dotNumBoard = document.getElementById('dotNum');
 
-    divs.scoreBoard = document.getElementById('score');
-    divs.dotNumBoard = document.getElementById('dotNum');
+    }, 500);
 
   }
 
