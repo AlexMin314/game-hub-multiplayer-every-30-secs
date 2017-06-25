@@ -12,13 +12,13 @@ const Game = function (data, mode, rosterArr, socket) {
   settings.roundStartMax = 18; // num
   settings.roundUpSpawn = 1; // num
   settings.speedScale = 1.0; // multiplyer
-  settings.spawnSpeed = 3000; // ms
+  settings.spawnSpeed = 4000; // ms
   settings.spawnSpeed = (settings.spawnSpeed / 1000 * settings.FPS);
   settings.bounceBuffer = 10; // px
   // Bonus(star).
   settings.bonusSpawn = 1; // num
   settings.bonusMax = 2; // num
-  settings.bonusSpawnSpeed = 4000; // ms
+  settings.bonusSpawnSpeed = 5000; // ms
   settings.bonusSpawnSpeed = (settings.bonusSpawnSpeed / 1000 * settings.FPS);
   // Player related
   settings.playerDotSpeed = 20; // lower = faster respond
@@ -192,14 +192,15 @@ const Game = function (data, mode, rosterArr, socket) {
 
       if (settings.frame % 60 === 0) world.score++;
 
-      if (!world.pause && settings.frame % settings.spawnSpeed === 0 &&
-      settings.frame > 100) {
+      if (!world.pause &&
+       settings.frame % settings.spawnSpeed === 0 &&
+       settings.frame > 100) {
         gameSpawn.spawnDraw(settings, world, false);
       }
 
       if (!world.pause &&
-        settings.frame % settings.bonusSpawnSpeed === 0 &&
-      settings.frame > 100) {
+       settings.frame % settings.bonusSpawnSpeed === 0 &&
+       settings.frame > 400) {
         gameSpawn.spawnDraw(settings, world, true);
       }
 

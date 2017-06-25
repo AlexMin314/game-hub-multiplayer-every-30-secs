@@ -32,8 +32,8 @@ const Dots = function (dotNum, settings, world, bonus) {
     let bh = mode === 'single' ? window.innerWidth : bRect.height;
 
     // Starting Point : random, avoid center(player protection)
-    const downside = bh - d - 50;//Math.random() * (bh / d) + (bh * (d - 1) / d) - 70;
-    const upside = bRect.top + d + 50;//Math.random() * (bh / d) + 70;
+    const downside = bh - d - 10;//Math.random() * (bh / d) + (bh * (d - 1) / d) - 70;
+    const upside = bRect.top + d + 10;//Math.random() * (bh / d) + 70;
     const randomSeed = Math.random() * 2 < 1 ? upside : downside;
     dots.style.top = Math.floor(randomSeed) + 'px';
     dots.style.left = Math.floor(Math.random() * (bw - 300) + 150 + bRect.left) + 'px';
