@@ -14,9 +14,10 @@ const utility = (function () {
   }
 
   // Append helper
-  const appendTo = (type, parent, id) => {
+  const appendTo = (type, parent, id, className) => {
     const newDiv = document.createElement(type);
-    newDiv.id = id || 'tempId';
+    if (id) newDiv.id = id;
+    if (className) newDiv.className = className;
     parent.appendChild(newDiv);
     return newDiv;
   };

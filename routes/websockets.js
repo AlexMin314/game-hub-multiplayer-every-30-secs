@@ -1,19 +1,17 @@
-//const socketsController = require('../controllers/sockets');
 const gameController = require('../controllers/game');
 
 module.exports = (io) => {
+  // Concurrent users array.
   const users = [];
 
   io.on('connection', (socket) => {
-    console.log('==User connected: ', socket.id);
+    // new user object
     const user = {};
-
 
     // reassign socket value with passport data.
     if (socket.request.user.logged_in) {
       socket.userName = socket.request.user.profile.name;
       user.roomName = '';
-      //socket.userId = socket.request.user.id;
       user.name = socket.userName;
       user.guest = false;
       user.id = socket.request.user.id;
@@ -23,7 +21,7 @@ module.exports = (io) => {
       users.push(user);
     } else {
       // Guest
-      user.name = 'GUEST ' + socket.id.slice(0, 5);
+      user.name = 'GUEST - ' + socket.id.slice(0, 5);
       user.guest = true;
       user.id = socket.id;
       user.socketId = socket.id;
@@ -32,8 +30,8 @@ module.exports = (io) => {
       users.push(user);
     }
 
-
     io.emit('update user', users);
+
 
     /**
      * Message
@@ -44,31 +42,8 @@ module.exports = (io) => {
     });
 
     /**
-     * Invitation and Matchroom
+     * Invitation and Matchroom join.
      */
-
-    socket.on('invitation', (userid) => {
-      users.forEach((e) => {
-        if (e.socketId === socket.id) {
-          e.status = 'busy';
-        }
-        if (e.id === userid && e.socketId !== socket.id) {
-          if (e.status === 'idle') {
-            let roomNum = userid.slice(0, 5) + Math.floor(Math.random() * 100 + 100);
-            e.status = 'wait';
-            io.to(socket.id).emit('error message', 'wait');
-            return io.to(e.socketId).emit('inviteRoom', roomNum, socket.id, users);
-          }
-          if (e.status === 'busy' || e.status === 'wait') {
-            io.to(socket.id).emit('error message', 'busy');
-          }
-          if (e.status === 'guest') {
-            io.to(socket.id).emit('error message', 'guest');
-          }
-        }
-      });
-    });
-
 
     socket.on('enter lobby', () => {
       socket.join('lobby');
@@ -79,6 +54,28 @@ module.exports = (io) => {
       user.roomName = roomNum;
       socket.leave('lobby');
       socket.join(roomNum);
+    });
+
+    socket.on('invitation', (userid) => {
+      users.forEach((e) => {
+        if (e.socketId === socket.id) {
+          e.status = 'busy';
+        }
+        if (e.id === userid && e.socketId !== socket.id) {
+          if (e.status === 'idle') {
+            const roomNum = userid.slice(0, 5) + Math.floor(Math.random() * 100 + 100);
+            e.status = 'wait';
+            io.to(socket.id).emit('error message', 'wait');
+            return io.to(e.socketId).emit('inviteRoom display', roomNum, socket.id, users);
+          }
+          if (e.status === 'busy' || e.status === 'wait') {
+            io.to(socket.id).emit('error message', 'busy');
+          }
+          if (e.status === 'guest') {
+            io.to(socket.id).emit('error message', 'guest');
+          }
+        }
+      });
     });
 
     socket.on('invitation confirmed', (roomNum, host) => {
@@ -101,8 +98,8 @@ module.exports = (io) => {
       });
 
       io.to(host).emit('join room', roomNum);
-      io.to(host).emit('Matchroom display', dataHost, dataOpp);
-      io.to(socket.id).emit('Matchroom display', dataHost, dataOpp);
+      io.to(dataHost.socketId).emit('Matchroom display', dataHost, dataOpp);
+      io.to(dataOpp.socketId).emit('Matchroom display', dataHost, dataOpp);
     });
 
     socket.on('invitation declined', (host) => {
@@ -112,17 +109,20 @@ module.exports = (io) => {
           e.status = 'idle';
           io.to(host).emit('error message', 'decline');
         }
-      })
-
+      });
     });
 
-    socket.on('game readyBtn', (from, to, host) => {
-      io.to(to.socketId).emit('readyBtn', from, to, host);
+    /**
+     * Game Ready process.
+     */
+
+    socket.on('readyBtn pressed', (who, host, to) => {
+      io.to(to.socketId).emit('readyBtn', who, to, host);
     });
 
-    socket.on('ready checker', (from, to) => {
-      io.to(from.socketId).emit('multi start', from.socketId);
-      io.to(to.socketId).emit('multi start', to.socketId);
+    socket.on('All ready', (host, opp) => {
+      io.to(host.socketId).emit('multi start', host.socketId);
+      io.to(opp.socketId).emit('multi start', opp.socketId);
     });
 
     socket.on('exit btn', (from, to, path) => {
@@ -131,7 +131,7 @@ module.exports = (io) => {
     });
 
     /**
-     * Game
+     * Game Starter.
      */
 
     socket.on('singleplay starter', (player) => {
@@ -151,7 +151,7 @@ module.exports = (io) => {
 
       const roster = [];
       users.forEach((e) => {
-        if(e.roomName === miniData.room) roster.push(e);
+        if (e.roomName === miniData.room) roster.push(e);
       });
 
       io.to(socket.id).emit('multiplay start', miniData, roster);
@@ -165,8 +165,11 @@ module.exports = (io) => {
       });
     });
 
+    /**
+     * Game Over related.
+     */
+
     socket.on('gameOver deliver', (loser, winner, rosterArr, world) => {
-      //console.log('loser' + loser.socketId);
       io.to(winner.socketId).emit('get winnerInfo', winner, rosterArr, 'win');
       io.to(loser.socketId).emit('gameOver post', loser, rosterArr, 'lose', world);
     });
@@ -181,18 +184,17 @@ module.exports = (io) => {
 
     socket.on('postScore', (gameResult) => {
       gameController.postScoreSocket(gameResult);
-    })
+    });
 
     socket.on('getScoreBoard', (status) => {
-      gameController.getScoreSocket(function (rank) {
+      gameController.getScoreSocket((rank) => {
         io.to(socket.id).emit('drawScoreBoard', rank, status);
       });
-    })
-
+    });
 
 
     /**
-     * [disconnect description]
+     * Disconnect.
      */
 
     socket.on('disconnect', (socket) => {
@@ -204,7 +206,5 @@ module.exports = (io) => {
       });
       io.emit('update user', users);
     });
-
-  });
-
-};
+  }); // connection event ends here.
+}; // module ends here.

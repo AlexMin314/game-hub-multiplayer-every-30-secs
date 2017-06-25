@@ -1,301 +1,183 @@
 const mainRoom = (function () {
-  //http://192.168.219.166:3000
-  ////http://172.16.30.145:3000
 
   const socket = io.connect('/', { secure: true, transports: ['websocket'] });
-  let gloChatInWrap = document.getElementById('globalChatInnerWrapper');
-  const gloalChat = document.getElementById('globalChat');
 
-  const star = document.getElementById('star1');
-  const star1 = document.getElementById('star2');
+  const gloalChat = document.getElementById('globalChat');
+  let gloChatInWrap = document.getElementById('globalChatInnerWrapper');
+  const charInput = document.getElementsByClassName('chatInput')[0];
+  const mainContainer = document.getElementById('mainContainer');
+
+  const matchtpl = document.getElementById('matchMenuTpl').innerHTML;
+  const roomLayoutTpl = document.getElementById('roomLayout').innerHTML;
+
+  // const star = document.getElementById('star1');
+  // const star1 = document.getElementById('star2');
   const clicked = document.getElementById('clicked');
   const beepSound = document.getElementById('counter');
   beepSound.volume = '0.5';
   clicked.volume = '0.8';
+
   let multiButtonChk = true;
   let matchMenuEle;
-  let player1 = false;
-  let player2 = false;
-  let ready1;
-  let ready2;
-  let gamechk1 = false;
-  let gamechk2 = false;
 
-
-  socket.emit('enter lobby');
-
+  const multiPlayerBtn = document.getElementById('multiPlay');
 
   /**
-   * [broadcast message]
+   * Chat related.
    */
-  socket.on('broadcast message', function (data, username) {
-    let msg = document.createElement('div');
-    msg.innerHTML = '<span class="chatTextId">' + username + '</span> :  ' + data;
-    msg.className = 'chatText';
-    gloChatInWrap.appendChild(msg);
+
+  socket.on('broadcast message', function (chat, username) {
+    const msg = utility.appendTo('div', gloChatInWrap, null, 'chatText');
+    msg.innerHTML = '<span class="chatTextId">' + username + ' </span> :  ';
+    msg.innerHTML += chat;
     gloChatInWrap.scrollTop = 1000;
   });
 
-  socket.on('error message', function (data) {
-    //console.log(socket.userName);
-    if (data === 'busy') {
-      let msg = document.createElement('div');
-      msg.innerHTML = 'The Player busy now, try later.';
-      msg.className = 'errorText';
-      gloChatInWrap.appendChild(msg);
-      gloChatInWrap.scrollTop = 1000;
+  // Error msg for match invitation.
+  socket.on('error message', function (type) {
+    const msg = utility.appendTo('div', gloChatInWrap, null, 'errorText');
+    switch (type) {
+      case 'busy':
+        msg.innerHTML = 'The player busy now, try later.';
+        break;
+      case 'wait':
+        msg.innerHTML = 'Match invitation has been sent.';
+        break;
+      case 'decline':
+        msg.innerHTML = 'The player declined your invitation.';
+        break;
+      case 'guest':
+        msg.innerHTML = 'Can not play multiplayer game with guests.';
+        break;
     }
-    if (data === 'wait') {
-      let msg = document.createElement('div');
-      msg.innerHTML = 'Invitation Sent.';
-      msg.className = 'errorText';
-      gloChatInWrap.appendChild(msg);
-      gloChatInWrap.scrollTop = 1000;
-    }
-    if (data === 'decline') {
-      let msg = document.createElement('div');
-      msg.innerHTML = 'The Player declined your invitation';
-      msg.className = 'errorText';
-      gloChatInWrap.appendChild(msg);
-      gloChatInWrap.scrollTop = 1000;
-    }
-    if (data === 'guest') {
-      let msg = document.createElement('div');
-      msg.innerHTML = 'Can not play multiplayer with guests.';
-      msg.className = 'errorText';
-      gloChatInWrap.appendChild(msg);
-      gloChatInWrap.scrollTop = 1000;
-    }
+    gloChatInWrap.scrollTop = 1000;
   });
 
-  function btnEvent() {
+
+  /*
+   * Lobby, invitation process related.
+   */
+
+  // Enter to global chat when connect.
+  socket.emit('enter lobby');
+
+  socket.on('join room', (roomNum) => {
+    // Remove main lobby layout.
+    mainContainer.innerHTML = '';
+    // Render match room tpl.
+    mainContainer.innerHTML = roomLayoutTpl;
+    // EventListening on chat send btn, enter key for new chatroom
+    chatBtnEvent();
+    socket.emit('join gameRoom', roomNum);
+  });
+
+  function chatBtnEvent() {
     gloChatInWrap = document.getElementById('globalChatInnerWrapper');
-    let sendBtn = document.getElementById('globalSendBtn');
+    const sendBtn = document.getElementById('globalSendBtn');
+    const sendInput = document.getElementById('globalChatVal');
+
+    // Send Btn.
     if (sendBtn) {
-      sendBtn.addEventListener('click', function (e) {
-        // e.preventDefault();
-        let message = document.getElementById('globalChatVal').value;
+      sendBtn.addEventListener('click', (e) => {
+        const message = sendInput.value;
         if (message) socket.emit('newMessage', message);
-        document.getElementById('globalChatVal').value = '';
+        sendInput.value = '';
       });
     }
-    let sendInput = document.getElementById('globalChatVal');
+    // Enter key.
     if (sendInput) {
-      sendInput.addEventListener('keypress', function (e) {
+      sendInput.addEventListener('keypress', (e) => {
         if (event.key === 'Enter') {
-          let message = document.getElementById('globalChatVal').value;
+          const message = sendInput.value;
           if (message) socket.emit('newMessage', message);
-          document.getElementById('globalChatVal').value = '';
+          sendInput.value = '';
         }
       });
     }
   }
+  // EventListening on chat send btn, enter key for Global Lobby.
+  chatBtnEvent();
 
-  btnEvent();
-
-
-
-
-
-  socket.on('join room', (roomNum) => {
-    const mainContainer = document.getElementById('mainContainer');
-    mainContainer.innerHTML = '';
-    const roomLayout = document.getElementById('roomLayout').innerHTML;
-    mainContainer.innerHTML = roomLayout;
-    btnEvent();
-    socket.emit('join gameRoom', roomNum);
-  });
-
-  socket.on('Matchroom display', (host, opp) => {
-    if (host.socketId === socket.id) player1 = true;
-    if (opp.socketId === socket.id) player2 = true;
-    // player1Info
-    const player1Info = document.getElementById('player1Info');
-    const player2Info = document.getElementById('player2Info');
-
-    const player1InfoDiv = document.createElement('div');
-    player1InfoDiv.id = 'player1InfoWrap';
-    player1InfoDiv.className = 'playersInfo';
-    player1Info.appendChild(player1InfoDiv);
-
-    const player1InfoWrap = document.getElementById('player1InfoWrap');
-
-    const player1Img = document.createElement('img');
-    player1Img.className = 'playersImg';
-    player1Img.src = host.picture;
-    player1InfoWrap.appendChild(player1Img);
-
-    const player1NameDiv = document.createElement('div');
-    player1NameDiv.className = 'playersName';
-    player1NameDiv.innerHTML = host.name;
-    player1InfoWrap.appendChild(player1NameDiv);
-
-
-
-    const player2InfoDiv = document.createElement('div');
-    player2InfoDiv.id = 'player2InfoWrap';
-    player2InfoDiv.className = 'playersInfo';
-    player2Info.appendChild(player2InfoDiv);
-
-    const player2InfoWrap = document.getElementById('player2InfoWrap');
-
-    const player2Img = document.createElement('img');
-    player2Img.className = 'playersImg';
-    player2Img.src = opp.picture;
-    player2InfoWrap.appendChild(player2Img);
-
-    const player2NameDiv = document.createElement('div');
-    player2NameDiv.className = 'playersName';
-    player2NameDiv.innerHTML = opp.name;
-    player2InfoWrap.appendChild(player2NameDiv);
-
-
-    ready1 = document.getElementById('player1ReadyBtn');
-    ready2 = document.getElementById('player2ReadyBtn');
-
-    if (ready1) {
-      if (player1) {
-        ready1.addEventListener('click', (e) => {
-          gamechk1 = true;
-          star.play();
-          ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-          ready1.style.paddingTop = '45px';
-          ready1.innerHTML = 'GAME<br>READY';
-          socket.emit('game readyBtn', 'player1', opp, host);
-        });
-      }
-      if (player2) {
-        ready2.addEventListener('click', (e) => {
-          gamechk2 = true;
-          star.play();
-          ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-          ready2.style.paddingTop = '45px';
-          ready2.innerHTML = 'GAME<br>READY';
-          socket.emit('game readyBtn', 'player2', host, opp);
-        });
-      }
+  // Match inviation window display.
+  socket.on('inviteRoom display', function (roomNum, host, users) {
+    // If opp user in multiplayer menu, turn off the menu for receiving invitation.
+    if (matchMenuEle) {
+      gloChatInWrap.style.display = 'block';
+      charInput.style.display = 'table';
+      gloalChat.removeChild(matchMenuEle);
     }
-
-    const exitBtn = document.getElementById('exitBtn');
-    exitBtn.addEventListener('click', (e) => {
-      clicked.play();
-      socket.emit('exit btn', host, opp, '/');
-    });
-
-  });
-
-  socket.on('readyBtn', (from, to, host) => {
-    if (from === 'player1' && player2 === true) {
-      gamechk1 = true;
-      star.play();
-      ready1.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-      ready1.style.paddingTop = '45px';
-      ready1.innerHTML = 'GAME<br>READY';
-      if (gamechk1 === true && gamechk2 === true) socket.emit('ready checker', host, to);
-    }
-    if (from === 'player2' && player1 === true) {
-      gamechk2 = true;
-      star1.play();
-      ready2.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
-      ready2.style.paddingTop = '45px';
-      ready2.innerHTML = 'GAME<br>READY';
-      if (gamechk1 === true && gamechk2 === true) socket.emit('ready checker', host, to);
-    }
-  });
-
-
-
-
-  socket.on('inviteRoom', function (roomNum, host, users) {
-    const inviteWindowDiv = document.createElement('div');
-    inviteWindowDiv.id = 'inviteWindow';
+    // Render invitation popup menu
+    const inviteWindowDiv = utility.appendTo('div', gloChatInWrap, 'inviteWindow', null);
     inviteWindowDiv.innerHTML = "<div class='col-xs-12'>You've got a<br>Match Invitation</div>";
     inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnC'><p>ACCEPT</p></div>";
     inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnD'><p>DECLINE</p></div>";
-    gloChatInWrap.appendChild(inviteWindowDiv);
     beepSound.play(); // ding dong??
 
-    multiPlayer.removeEventListener('click', multiBtnEvent);
+    const inviteWindow = document.getElementById('inviteWindow');
+    const declineBtn = document.getElementById('inviteBtnD');
+    const agreeBtn = document.getElementById('inviteBtnC');
 
-    document.getElementById('inviteBtnC').addEventListener('click', (e) => {
-      let player1;
-      let player2;
+
+    // Prevent clicking event of multiplayer btn when user got invitation.
+    multiPlayerBtn.removeEventListener('click', multiBtnEvent);
+
+    // Agree btn of invitation.
+    agreeBtn.addEventListener('click', (e) => {
       clicked.play();
-      const mainContainer = document.getElementById('mainContainer');
       mainContainer.innerHTML = '';
-      const roomLayout = document.getElementById('roomLayout').innerHTML;
-      mainContainer.innerHTML = roomLayout;
-      btnEvent();
+      mainContainer.innerHTML = roomLayoutTpl;
+      chatBtnEvent();
       socket.emit('invitation confirmed', roomNum, host);
     });
 
-    const declineBtn = document.getElementById('inviteBtnD');
+    // Decline btn of invitation.
     declineBtn.addEventListener('click', (e) => {
-      const inviteWindow = document.getElementById('inviteWindow');
       clicked.play();
       gloChatInWrap.removeChild(inviteWindow);
-      if (multiPlayer) {
-        multiPlayer.addEventListener('click', multiBtnEvent);
-      }
+      if (multiPlayerBtn) multiPlayerBtn.addEventListener('click', multiBtnEvent);
       socket.emit('invitation declined', host);
     });
 
-    // after 10 sec, automatically decline the invitation
+    // after 5 sec, automatically decline the invitation
     setTimeout(() => {
       if (document.getElementById('inviteBtnD')) declineBtn.click();
-    }, 10000);
-  });
-
-  socket.on('exit room', (path) => {
-    let msg = document.createElement('div');
-    msg.innerHTML = 'Exit buttom pressed.';
-    msg.className = 'errorText';
-    gloChatInWrap.appendChild(msg);
-    gloChatInWrap.scrollTop = 1000;
-    setTimeout(() => {
-      location.href = path;
-    }, 1500);
+    }, 5000);
   });
 
 
 
 
   /**
-   * User List
+   * User List, Score Board Dispaly
    */
-  const scoreBoardEle = document.getElementById('boardInnerWrapper');
-  if (scoreBoardEle) {
-    socket.on('update user', (users) => {
-      scoreBoardEle.innerHTML = '';
 
+  const userList = document.getElementById('boardInnerWrapper');
+  if (userList) {
+    // Updating user list
+    socket.on('update user', (users) => {
+      userList.innerHTML = '';
       users.forEach((e) => {
-        let newUserDiv = document.createElement('div');
-        newUserDiv.className = 'newUser';
-        newUserDiv.id = e.id;
-        scoreBoardEle.appendChild(newUserDiv);
-        let theNewUserDiv = document.getElementById(e.id);
-        /////
+        utility.appendTo('div', userList, e.id, 'newUser');
+        const theNewUserDiv = document.getElementById(e.id);
+        // User will be clicked only when multiplayer btn activated.
         theNewUserDiv.addEventListener('click', (event) => {
-          if (!multiButtonChk) {
-            if (matchMenuEle) {
-              gloalChat.removeChild(matchMenuEle);
-              gloChatInWrap.style.display = 'block';
-              charInput.style.display = 'table';
-              multiButtonChk = !multiButtonChk;
-            }
+          if (!multiButtonChk && matchMenuEle) {
+            gloalChat.removeChild(matchMenuEle);
+            gloChatInWrap.style.display = 'block';
+            charInput.style.display = 'table';
+            multiButtonChk = !multiButtonChk;
             clicked.play();
             socket.emit('invitation', e.id);
           }
         });
-
+        // Render Profile Images of user list.
         if (e.picture) {
-          let newUserPicDiv = document.createElement('img');
+          const newUserPicDiv = utility.appendTo('img', theNewUserDiv, null, null);
           newUserPicDiv.setAttribute('src', e.picture);
-          theNewUserDiv.appendChild(newUserPicDiv);
         }
-        let newUserNameDiv = document.createElement('span');
+        // Render Profile Name of user list.
+        const newUserNameDiv = utility.appendTo('span', theNewUserDiv, null, null);
         newUserNameDiv.innerHTML = e.name;
-        theNewUserDiv.appendChild(newUserNameDiv);
       });
     });
   }
@@ -305,9 +187,6 @@ const mainRoom = (function () {
    * game related
    */
 
-  /**
-   * guestPlay (Single Only)
-   */
   const guestPlay = document.getElementById('guestPlay');
   if (guestPlay) {
     guestPlay.addEventListener('click', (e) => {
@@ -315,7 +194,6 @@ const mainRoom = (function () {
       socket.emit('singleplay starter');
     });
   }
-
 
   const singlePlayer = document.getElementById('singlePlay');
   if (singlePlayer) {
@@ -325,61 +203,46 @@ const mainRoom = (function () {
     });
   }
 
-  const multiPlayer = document.getElementById('multiPlay');
-
+  if (multiPlayerBtn) {
+    multiPlayerBtn.addEventListener('click', multiBtnEvent);
+  }
   function multiBtnEvent(e) {
     clicked.play();
     matchMenuSwap(multiButtonChk);
     multiButtonChk = !multiButtonChk;
   }
 
-
-  if (multiPlayer) {
-    multiPlayer.addEventListener('click', multiBtnEvent);
-  }
-
-  const charInput = document.getElementsByClassName('chatInput')[0];
-
+  // Match invitation menu swap helper.
   function matchMenuSwap(chk) {
     if (chk) {
       gloChatInWrap.style.display = 'none';
       charInput.style.display = 'none';
-      let matchMenuDiv = document.createElement('div');
-      matchMenuDiv.id = 'matchMenu';
-      matchMenuDiv.className = 'container';
-      gloalChat.appendChild(matchMenuDiv);
+      utility.appendTo('div', gloalChat, 'matchMenu', 'container');
       matchMenuEle = document.getElementById('matchMenu');
-      marchMenu();
+      matchMenu();
     } else {
       gloChatInWrap.style.display = 'block';
       charInput.style.display = 'table';
-      matchMenuEle = document.getElementById('matchMenu');
-      if (matchMenuEle) gloalChat.removeChild(matchMenuEle);
+      gloalChat.removeChild(matchMenuEle);
     }
   }
-  let matchtpl = document.getElementById('matchMenuTpl')
-  if (matchtpl) matchtpl = matchtpl.innerHTML;
-  const matchtplDiv = document.createElement('div');
-  matchtplDiv.innerHTML = matchtpl;
 
-  function marchMenu() {
-    let matchMenuEle = document.getElementById('matchMenu');
-    matchMenuEle.appendChild(matchtplDiv);
+  // Render Match menu
+  function matchMenu() {
+    const matchtplDiv = utility.appendTo('div', matchMenuEle, null, null);
+    matchtplDiv.innerHTML = matchtpl;
 
-    let vsModeEle = document.getElementById('vsMode');
-    let coopModeEle = document.getElementById('coopMode');
+    const vsModeEle = document.getElementById('vsMode');
+    const coopModeEle = document.getElementById('coopMode');
     vsModeEle.addEventListener('click', (e) => {
       clicked.play();
-      console.log('1VS1 mode on');
       vsModeEle.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
       coopModeEle.style.backgroundColor = 'rgba(255, 255, 255, 0)';
       document.getElementById('descriptMode').style.display = 'none';
       document.getElementById('descriptUser').style.display = 'block';
-
     });
     coopModeEle.addEventListener('click', (e) => {
       clicked.play();
-      console.log('Coop Mode on');
       vsModeEle.style.backgroundColor = 'rgba(255, 255, 255, 0)';
       coopModeEle.style.backgroundColor = 'rgba(180, 180, 180, 0.53)';
       document.getElementById('descriptMode').style.display = 'none';
@@ -387,51 +250,14 @@ const mainRoom = (function () {
     })
   }
 
-  /**
-   * Room
+
+
+  /*
+   * Cloure.
    */
-
-  socket.on('multi start', () => {
-    setTimeout(() => {
-      let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start .................. 3';
-      msg.className = 'startText';
-      gloChatInWrap.appendChild(msg);
-      gloChatInWrap.scrollTop = 1000;
-      beepSound.play();
-    }, 1000);
-    setTimeout(() => {
-      let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start ............ 2';
-      msg.className = 'startText';
-      gloChatInWrap.appendChild(msg);
-      gloChatInWrap.scrollTop = 1000;
-      beepSound.play();
-    }, 2000);
-    setTimeout(() => {
-      let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start ...... 1';
-      msg.className = 'startText';
-      gloChatInWrap.appendChild(msg);
-      gloChatInWrap.scrollTop = 1000;
-      beepSound.play();
-    }, 3000);
-    setTimeout(() => {
-      let msg = document.createElement('div');
-      msg.innerHTML = 'Game Start ...';
-      msg.className = 'startText';
-      gloChatInWrap.appendChild(msg);
-      gloChatInWrap.scrollTop = 1000;
-      beepSound.play();
-    }, 4000);
-    setTimeout(() => {
-      const player = player1 ? 'player1' : 'player2';
-      socket.emit('multiplay starter', player);
-    }, 5000);
-  });
-
   gameStart(socket);
   gameFinish(socket);
+  matchRoom(socket, chatBtnEvent);
 
   return {
     socket: socket

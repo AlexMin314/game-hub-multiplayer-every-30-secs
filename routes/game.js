@@ -12,8 +12,8 @@ const contactController = require('../controllers/contact');
 const gameController = require('../controllers/game');
 
 
-router.get('/:room', gameController.room); // game lounge
-router.get('/multip/:room', gameController.multiplay); // for login user
+//router.get('/:room', gameController.room); // game lounge
+//router.get('/multip/:room', gameController.multiplay); // for login user
 //router.get('/game/get/score', gameController.getScore);
 //router.post('/game/post/score', gameController.postScore);
 

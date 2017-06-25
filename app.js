@@ -140,6 +140,7 @@ app.use(errorHandler());
  * Router
  */
 const socketIO = require('./routes/websockets')(io);
+const socketMulti = require('./routes/multiplayer')(io);
 
 const indexRoute = require('./routes/index');
 const authRoute = require('./routes/auth');

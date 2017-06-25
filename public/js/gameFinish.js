@@ -3,6 +3,7 @@ const gameFinish = function(socket) {
   socket.on('gameOver post', (curPlayer, rosterArr, status, world) => {
 
     world.gameover = true;
+    const clicked = document.getElementById('clicked');
 
     // Removing dot elements.
     utility.board.innerHTML = '';
@@ -20,7 +21,7 @@ const gameFinish = function(socket) {
     clearInterval(world.thirtySecBeep);
 
     // Play game over sound ---------
-    if (world.sound) utility.bgSound(world, gameLogic.gameOverChk());
+    if (world.sound) utility.bgSound(world, true);
 
     // Appending Wrapper to game board for game over screen.
     utility.makeWrapper();
@@ -41,7 +42,7 @@ const gameFinish = function(socket) {
     // Event Listening on RETRY.
     document.getElementById('retry').addEventListener('click', (e) => {
       // Beep sound when retry clicked.
-      //if (world.sound) world.clickSound.play();
+      if (world.sound) clicked.play();
 
       // Back to main lobby.
       setInterval(() => {

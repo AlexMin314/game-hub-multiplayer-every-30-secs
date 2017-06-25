@@ -4,7 +4,6 @@ html
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    meta(name='theme-color' content='#4DA5F4')
     meta(name='csrf-token', content=_csrf)
     title Every 30 Secs
     link(rel='shortcut icon', href='/favicon.png')
@@ -16,18 +15,18 @@ html
   body
     .container
       include partials/flash
-      audio#star1(src='./src/star.mp3')
-      audio#star2(src='./src/star.mp3')
-      audio#counter(src='./src/count.mp3')
-      audio#clicked(src='./src/clicked.mp3')
+      audio#star1(src='./src/star.mp3', type='audio/mpeg')
+      audio#star2(src='./src/star.mp3', type='audio/mpeg')
+      audio#counter(src='./src/count.mp3', type='audio/mpeg')
+      audio#clicked(src='./src/clicked.mp3', type='audio/mpeg')
     block content
     #board
     #pause
     
-    script(src='/js/lib/jquery-3.1.1.min.js')
-    script(src='/js/lib/bootstrap.min.js')
-    //script(src='/js/lib/socketIo.js')    
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')    
+    script(type='text/javascript', src='/js/lib/jquery-3.1.1.min.js')
+    script(type='text/javascript', src='/js/lib/bootstrap.min.js')
+    script(type='text/javascript', src='/js/lib/socketIo.js')    
+    //script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')    
 
     script(type='text/javascript', src='./js/game/objDots.js')
     script(type='text/javascript', src='./js/game/objPlayer.js')
@@ -40,10 +39,10 @@ html
     script(type='text/javascript', src='./js/game/gameLayouts.js')
     script(type='text/javascript', src='./js/game/gameOver.js')
     script(type='text/javascript', src='./js/game/gameCore.js')
-    script(src='./js/game/scores.js')
-    script(src='/js/gameStart.js')
-    script(src='/js/gameFinish.js')
-    script(src='/js/mainPage.js')
+    script(type='text/javascript', src='/js/gameStart.js')
+    script(type='text/javascript', src='/js/gameFinish.js')
+    script(type='text/javascript', src='/js/matchRoom.js')
+    script(type='text/javascript', src='/js/mainPage.js')
     
     block scripts
       
