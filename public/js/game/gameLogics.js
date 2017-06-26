@@ -19,8 +19,8 @@ const gameLogic = (function () {
 
     if (settings.mode === 'multi') {
       roster.forEach((e) => {
-        if(e.id !== curPlayer.id) winner = e;
-        if(e.id === curPlayer.id) loser = e;
+        if (e.id !== curPlayer.id) winner = e;
+        if (e.id === curPlayer.id) loser = e;
       });
     }
 
@@ -96,11 +96,10 @@ const gameLogic = (function () {
   // Gives wall limit to target(player).
   const wall = function (settings) {
     const rect = this.getBoundingClientRect();
-    const r = rect.width / 2;
+    //const r = rect.width / 2;
 
     const bRect = utility.board.getBoundingClientRect();
     const mode = settings.mode;
-    const buffer = settings.bounceBuffer;
 
     let ww = mode === 'single' ? window.innerWidth : bRect.width;
     ww += bRect.left;
@@ -111,8 +110,8 @@ const gameLogic = (function () {
     const h = Math.floor(hh);
     // Wall condition.
     if (rect.bottom > h) this.style.top = (h - rect.height) + 'px';
-    if (rect.top < bRect.top + buffer) this.style.top = bRect.top + 'px';
-    if (rect.left < bRect.left + buffer) this.style.left = bRect.left + 'px';
+    if (rect.top < bRect.top) this.style.top = bRect.top + 'px';
+    if (rect.left < bRect.left) this.style.left = bRect.left + 'px';
     if (rect.right > w) this.style.left = (w - rect.width) + 'px';
   };
 
@@ -142,7 +141,7 @@ const gameLogic = (function () {
     const bRect = utility.board.getBoundingClientRect();
     const mode = settings.mode;
 
-    const divider = 300;
+    const divider = 400;
     const dotN = 3;
 
     let sWidth;
@@ -152,26 +151,33 @@ const gameLogic = (function () {
     if (!start) {
       sWidth = mode === 'single' ? width : bRect.width;
       sHeight = mode === 'single' ? height : bRect.height;
-      let multi = Math.floor(width / divider) + 1;
+      const multiplier = Math.floor(sWidth / divider) + 1;
       //settings.roundStart = multi;
-      // settings.roundStartMax = multi * dotN;
+      settings.roundStartMax = multiplier * dotN;
+      if (mode === 'multi') {
+        let heightMulti = Math.floor(sWidth / divider) - 1;
+        heightMulti = 3 - heightMulti;
+        settings.roundStartMax -= heightMulti;
+      }
     }
 
     // Detecting changes on resolution after game start.
-    if (start && (sWidth !== width || sHeight !== height)) {
-      let multi = Math.floor(width / divider) + 1;
-      //settings.roundStart = multi;
-      settings.roundStartMax = multi * dotN;
-      if (width <= 600 && height < 600) {
-        //settings.roundStart = multi - dotN;
-        settings.roundStartMax = multi * dotN - dotN;
+    if (mode === 'single') {
+      if (start && (sWidth !== width || sHeight !== height)) {
+        const multi = Math.floor(width / divider) + 1;
+        //settings.roundStart = multi;
+        settings.roundStartMax = multi * dotN;
+        if (width <= 600 && height < 600) {
+          //settings.roundStart = multi - dotN;
+          settings.roundStartMax = multi * dotN - dotN;
+        }
+        if (width <= 600 && height > 600) {
+          //settings.roundStart = multi + dotN;
+          settings.roundStartMax = multi * dotN + dotN;
+        }
+        sWidth = width;
+        sHeight = height;
       }
-      if (width <= 600 && height > 600) {
-        //settings.roundStart = multi + dotN;
-        settings.roundStartMax = multi * dotN + dotN;
-      }
-      sWidth = width;
-      sHeight = height;
     }
   };
 

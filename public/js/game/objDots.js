@@ -27,7 +27,6 @@ const Dots = function (dotNum, settings, world, bonus) {
     const bRect = utility.board.getBoundingClientRect();
 
     const mode = settings.mode;
-    console.log(mode);
     let bw = mode === 'single' ? window.innerHeight : bRect.width;
     let bh = mode === 'single' ? window.innerWidth : bRect.height;
 

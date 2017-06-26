@@ -1,29 +1,34 @@
 /* Drawing related in render loop */
 
 // Draw movement of player and dots.
-const drawMovements = (settings, world, mouse, curPlayer, rosterArr) => {
+const drawMovements = (settings, world, mouse, curPlayer) => {
   // player movement + collision detection.
   if (!world.gameover) {
-    world.playerList.map(function (e, i, arr) {
-      gameLogic.collision.call(e, world.dotList, world, settings, true, false, curPlayer, rosterArr);
-      gameLogic.collision.call(e, world.bonus, world, settings, true, true, curPlayer, rosterArr);
-      return e.drawPlayerMove(mouse);
-    });
+    // world.playerList.forEach((e) => {
+      gameLogic.collision.call(world.playerList[0], world.dotList, world, settings, true, false, curPlayer, settings.pList);
+      gameLogic.collision.call(world.playerList[0], world.bonus, world, settings, true, true, curPlayer, settings.pList);
+      world.playerList[0].drawPlayerMove(mouse);
+      world.playerList[1].drawPlayerMove(mouse);
+    // world.playerList.forEach((e) => {
+    //   gameLogic.collision.call(e, world.dotList, world, settings, true, false, curPlayer, settings.pList);
+    //   gameLogic.collision.call(e, world.bonus, world, settings, true, true, curPlayer, settings.pList);
+    //   e.drawPlayerMove(mouse);
+    // });
 
     // dot(enemy) movement.
-    world.dotList.map(function (e) {
-      return e.drawDotMove();
+    world.dotList.forEach(function (e) {
+      e.drawDotMove();
     });
 
     // bonus(star) movement.
-    world.bonus.map(function (e) {
-      return e.drawDotMove();
+    world.bonus.forEach(function (e) {
+      e.drawDotMove();
     });
 
     // line(enemy) movement.
     if (world.lineEvent) {
-      world.line.map(function (e) {
-        return e.drawLineMove();
+      world.line.forEach(function (e) {
+        e.drawLineMove();
       });
     }
   }

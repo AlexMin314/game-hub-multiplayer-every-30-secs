@@ -32,6 +32,7 @@ module.exports = (io) => {
 
     io.emit('update user', users);
 
+    console.log('===> User Connected : ', socket.id, socket.userName);
 
     /**
      * Message
@@ -145,9 +146,11 @@ module.exports = (io) => {
     socket.on('multiplay starter', (player) => {
       const miniData = {};
       miniData.id = user.id;
+      miniData.socketId = user.socketId;
       miniData.name = user.name;
       miniData.guest = user.guest;
       miniData.room = user.roomName;
+      miniData.player = player;
 
       const roster = [];
       users.forEach((e) => {

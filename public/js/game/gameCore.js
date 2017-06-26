@@ -1,12 +1,19 @@
-const Game = function (data, mode, rosterArr, socket) {
+const Game = function (cPlayer, mode, rosterArr, socket) {
 
   /* Game settings */
 
-  var settings = {};
+  const settings = {};
   settings.FPS = 60;
   settings.frame = 0;
-  settings.mode = mode; //game mode
-  settings.playerList = rosterArr; // ['player1', 'player2']
+  settings.mode = mode; // game mode
+  settings.pList = rosterArr; // ['player1', 'player2']
+  settings.player = cPlayer.player; // 'player1' String.
+  settings.socket = socket; // cur socket.
+  if (settings.mode === 'multi') {
+    rosterArr.forEach((e) => {
+      if (e.socketId !== socket.id) settings.oppPlayer = e;
+    });
+  }
   // Dots(emeny).
   settings.roundStart = 2; // num
   settings.roundStartMax = 18; // num
@@ -23,13 +30,13 @@ const Game = function (data, mode, rosterArr, socket) {
   // Player related
   settings.playerDotSpeed = 20; // lower = faster respond
   // Debug mode - don't touch.
-  settings.godmode = false;
+  settings.godmode = true;
 
   /* DO NOT CHANGE BELOW */
 
   /* World settings */
 
-  var world = {};
+  const world = {};
   // Player Dot.
   world.playerList = [];
   world.playerLength = 0;
@@ -66,23 +73,28 @@ const Game = function (data, mode, rosterArr, socket) {
   world.gameover = false;
 
   // Controller.
-  var mouse = {};
+  const mouse = {};
   mouse.x = 0;
   mouse.y = 0;
+  mouse.x1 = 0;
+  mouse.y1 = 0;
+  mouse.x2 = 0;
+  mouse.y2 = 0;
 
   // Skill settings - not implemented yet.
-  var skill = {};
+  const skill = {};
   skill.q = false;
   skill.w = false;
 
   // Caching div info.
-  var divs = {};
+  const divs = {};
   divs.gameBoard = null;
   divs.scoreBoard = null;
   divs.dotNumBoard = null;
   divs.startButtonText = null;
   divs.theWrapper = null;
-  divs.player = null;
+  let bRect;
+
 
   /* Board init start!!!!! */
 
@@ -92,11 +104,7 @@ const Game = function (data, mode, rosterArr, socket) {
   // Background sound play
   utility.bgSound(world, gameLogic.gameOverChk());
 
-  // Append some sound effect
-  //utility.audio('star1', './src/star.mp3', false, false);
-  //utility.audio('star2', './src/star.mp3', false, false);
-  //utility.audio('counter', './src/count.mp3', false, false);
-  //utility.audio('clicked', './src/clicked.mp3', false, false);
+  // sound effect
   world.clickSound = document.getElementById('clicked');
   world.star1 = document.getElementById('star1');
   world.star2 = document.getElementById('star2');
@@ -127,8 +135,7 @@ const Game = function (data, mode, rosterArr, socket) {
       // setTimeout for waiting tutorial ends.
       setTimeout(function () {
         // Player Spawn.
-        gameSpawn.playerSpawner(settings, world);
-        divs.player = document.getElementById('playerDot1');
+        gameSpawn.playerSpawner(settings, world, 1);
 
         //Removing start button and start game.
         gameSpawn.trigger(settings, world);
@@ -144,14 +151,14 @@ const Game = function (data, mode, rosterArr, socket) {
     // find smaller resolution and fix game board!
     const board = document.getElementById('board');
 
-    socket.emit('resolution post', window.innerWidth, window.innerHeight, data);
+    socket.emit('resolution post', window.innerWidth, window.innerHeight, cPlayer);
 
     socket.on('resolution fixer', (width, height) => {
       const boardWidth = window.innerWidth > width ? width : window.innerWidth;
       const boardHeight = window.innerHeight > height ? height : window.innerHeight;
       board.style.width = boardWidth + 'px';
       board.style.height = boardHeight + 'px';
-      board.style.border = '3px solid orange';
+      board.style.border = '2px solid orange';
       board.style.margin = '0 auto';
       if (window.innerHeight > height) {
         const top = (window.innerHeight - boardHeight - 10) / 2;
@@ -159,10 +166,10 @@ const Game = function (data, mode, rosterArr, socket) {
       }
     });
 
-
     setTimeout(() => {
-      gameSpawn.playerSpawner(settings, world);
-      divs.player = document.getElementById('playerDot1');
+      bRect = utility.board.getBoundingClientRect();
+      gameSpawn.playerSpawner(settings, world, 1);
+      gameSpawn.playerSpawner(settings, world, 2);
 
       setTimeout(() => {
         // setTimeout for waiting tutorial ends.
@@ -186,21 +193,21 @@ const Game = function (data, mode, rosterArr, socket) {
 
     // Checking start:true, pause:false, gameoverChecker: false.
     if (world.start && !world.pause && !gameLogic.gameOverChk() && !world.gameover) {
-      drawMovements(settings, world, mouse, data, settings.playerList);
+      drawMovements(settings, world, mouse, cPlayer);
 
       layout.updatingBoard(divs.scoreBoard, divs.dotNumBoard, world);
 
       if (settings.frame % 60 === 0) world.score++;
 
       if (!world.pause &&
-       settings.frame % settings.spawnSpeed === 0 &&
-       settings.frame > 100) {
+        settings.frame % settings.spawnSpeed === 0 &&
+        settings.frame > 100) {
         gameSpawn.spawnDraw(settings, world, false);
       }
 
       if (!world.pause &&
-       settings.frame % settings.bonusSpawnSpeed === 0 &&
-       settings.frame > 400) {
+        settings.frame % settings.bonusSpawnSpeed === 0 &&
+        settings.frame > 400) {
         gameSpawn.spawnDraw(settings, world, true);
       }
 
@@ -214,17 +221,31 @@ const Game = function (data, mode, rosterArr, socket) {
   }());
 
 
-  mainRoom.socket.on('get winnerInfo', (curPlayer, rosterArr, status) => {
+  socket.on('get winnerInfo', (cPlayer, rosterArr, status) => {
     world.gameover = true;
-    socket.emit('winner gameover', curPlayer, rosterArr, status, world)
+    socket.emit('winner gameover', cPlayer, rosterArr, status, world);
   });
+
+  socket.on('draw mouse', (mouseOpp) => {
+    mouse.x2 = mouseOpp.x1;
+    mouse.y2 = mouseOpp.y1;
+  })
 
   /* Event Listener related */
 
   const event = gameEvent(settings, world, mouse);
 
   (function () {
-    document.addEventListener('mousemove', event.getMousePos, false);
+    document.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      if (settings.mode === 'multi') {
+        mouse.x1 = mouse.x - bRect.left;
+        mouse.y1 = mouse.y - bRect.top;
+        if (settings.frame % 10 === 0) socket.emit('player mouse', settings.oppPlayer, mouse)
+      }
+    }, false);
+    // document.addEventListener('mousemove', event.getMousePos, false);
     if (settings.mode === 'single') {
       document.addEventListener('keydown', event.gamePause, false);
       document.getElementById('gameStart').addEventListener('click', startClick, false);

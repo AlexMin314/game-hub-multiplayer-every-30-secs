@@ -68,8 +68,8 @@ const gameSpawn = (function () {
     }
   };
 
-  const playerSpawner = (settings, world) => {
-    world.playerList.push(new Player(settings, world));
+  const playerSpawner = (settings, world, player) => {
+    world.playerList.push(new Player(settings, world, player));
     world.playerLength = world.playerList.length;
   };
 

@@ -1,10 +1,13 @@
-const Player = function (settings, world) {
+const Player = function (settings, world, playerNum) {
   // Settings
   let playerDot = null;
-  let playerNum = 1;
   let pX = 0;
   let pY = 0;
   let pRadius = 0;
+  const pNum = playerNum;
+  const mode = settings.mode;
+  const socket = settings.socket;
+  const bRect = document.getElementById('board').getBoundingClientRect();
 
   // Initiation.
   (function () {
@@ -24,11 +27,12 @@ const Player = function (settings, world) {
     pX = pRect.left;
     pY = pRect.top;
 
-    // Reducing approach speed when the cursor and playerDot are closer.
-    let nextX = pX + (mouse.x - 25 - pX) / settings.playerDotSpeed;
-    let nextY = pY + (mouse.y - 25 - pY) / settings.playerDotSpeed;
+    let mouseX = pNum === 1 ? mouse.x : mouse.x2 + bRect.left;
+    let mouseY = pNum === 1 ? mouse.y : mouse.y2 + bRect.top;
 
-    //if (nextX < )
+    // Reducing approach speed when the cursor and playerDot are closer.
+    const nextX = pX + (mouseX - 25 - pX) / settings.playerDotSpeed;
+    const nextY = pY + (mouseY - 25 - pY) / settings.playerDotSpeed;
 
     // Set new Coordinates for next frame.
     playerDot.style.left = nextX + "px";
@@ -37,6 +41,7 @@ const Player = function (settings, world) {
     // Set wall boundary to player controller
     gameLogic.wall.call(playerDot, settings);
   };
+
 
   // Return Coordinate for public usage
   this.showInfo = function () {
