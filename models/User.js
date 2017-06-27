@@ -22,7 +22,9 @@ const userSchema = new mongoose.Schema({
 
   game: {
     play: Array, // Personal Scores, play Number, match result
-    level: Number
+    level: Number,
+    exp: Number,
+    progress: Number
   }
 
 }, { timestamps: true });

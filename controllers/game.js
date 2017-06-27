@@ -17,11 +17,13 @@ exports.postScoreSocket = (data) => {
   playInfo.save();
 
   User.findById(data.id, (err, user) => {
-    if (err) { return next(err); };
+    if (err) { return next(err); }
     user.game.play.push(playInfo);
+    user.game.exp += data.score;
+    user.game.level = Math.floor(user.game.exp / 3000) + 1;
+    user.game.progress = Math.floor((user.game.exp % 3000) / 30);
     user.save();
   });
-
 };
 
 exports.getScoreSocket = (next) => {
@@ -32,5 +34,5 @@ exports.getScoreSocket = (next) => {
     .select('name score')
     .exec((err, rank) => {
       next(rank);
-    })
+    });
 };

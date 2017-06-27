@@ -87,6 +87,9 @@ passport.use(new FacebookStrategy({
           user.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
           user.profile.location = (profile._json.location) ? profile._json.location.name : '';
           user.game.level = 0;
+          user.game.exp = 0;
+          user.game.level = 0;
+          user.game.progress = 0;
           user.save((err) => {
             done(err, user);
           });
@@ -145,6 +148,9 @@ passport.use(new GitHubStrategy({
           user.profile.picture = profile._json.avatar_url;
           user.profile.location = profile._json.location;
           user.game.level = 0;
+          user.game.exp = 0;
+          user.game.level = 0;
+          user.game.progress = 0;
           user.save((err) => {
             done(err, user);
           });
@@ -201,6 +207,9 @@ passport.use(new TwitterStrategy({
       user.profile.location = profile._json.location;
       user.profile.picture = profile._json.profile_image_url_https;
       user.game.level = 0;
+      user.game.exp = 0;
+      user.game.level = 0;
+      user.game.progress = 0;
       user.save((err) => {
         done(err, user);
       });
@@ -256,6 +265,9 @@ passport.use(new GoogleStrategy({
           user.profile.name = profile.displayName;
           user.profile.picture = profile._json.image.url;
           user.game.level = 0;
+          user.game.exp = 0;
+          user.game.level = 0;
+          user.game.progress = 0;
           user.save((err) => {
             done(err, user);
           });
@@ -317,6 +329,9 @@ passport.use(new LinkedInStrategy({
           user.profile.location = profile._json.location.name;
           user.profile.picture = profile._json.pictureUrl;
           user.game.level = 0;
+          user.game.exp = 0;
+          user.game.level = 0;
+          user.game.progress = 0;
           user.save((err) => {
             done(err, user);
           });
@@ -354,6 +369,9 @@ passport.use(new OpenIDStrategy({
         user.profile.name = profile.personaname;
         user.profile.picture = profile.avatarmedium;
         user.game.level = 0;
+        user.game.exp = 0;
+        user.game.level = 0;
+        user.game.progress = 0;
         user.save((err) => {
           done(err, user);
         });
