@@ -140,6 +140,7 @@ module.exports = (io) => {
       miniData.id = user.id;
       miniData.name = user.name;
       miniData.guest = user.guest;
+      miniData.player = 'player1';
       io.to(socket.id).emit('singleplay start', miniData);
     });
 

@@ -32,7 +32,7 @@ const gameLogic = (function () {
 
     // Checking debug mode and game over or not.
     if (!gameoverChecker) {
-      arr.map((e, i) => {
+      arr.forEach((e, i) => {
         // Target(enemy,bonus) coordinate.
         let xTarget = Math.floor(e.showInfo().x);
         let yTarget = Math.floor(e.showInfo().y);

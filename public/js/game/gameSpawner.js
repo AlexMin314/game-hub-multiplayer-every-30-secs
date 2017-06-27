@@ -21,14 +21,18 @@ const gameSpawn = (function () {
     layout.boardInfo(world);
 
     // Initial dot spawn.
-    for (var k = 0; k < settings.roundStart; k++) {
-      dotSpawner(settings, world, false);
+    if (settings.mode === 'single') {
+      for (var k = 0; k < settings.roundStart; k++) {
+        dotSpawner(settings, world, false);
+      }
     }
 
     // Line event triggering.
-    setTimeout(() => {
-      gameLogic.lineEventTrigger(settings, world);
-    }, world.lineEventTimer);
+    if (settings.player === 'player1') { // temp turnoff condition for testing.
+      setTimeout(() => {
+        gameLogic.lineEventTrigger(settings, world);
+      }, world.lineEventTimer);
+    }
 
     // 30 Sec checker.
     world.thirtySecBeep = setInterval(function () {
