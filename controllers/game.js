@@ -22,6 +22,13 @@ exports.postScoreSocket = (data) => {
     user.game.exp += data.score;
     user.game.level = Math.floor(user.game.exp / 3000) + 1;
     user.game.progress = Math.floor((user.game.exp % 3000) / 30);
+    if(data.match === 'win') user.game.win++;
+    if(data.match === 'lose') user.game.lose++;
+    if(data.match === 'single') user.game.single++;
+    user.game.total = user.game.win + user.game.lose;
+    if(data.score > user.game.top) user.game.top = data.score;
+
+    // user.game.top = user.game.play
     user.save();
   });
 };

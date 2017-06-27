@@ -24,7 +24,12 @@ const userSchema = new mongoose.Schema({
     play: Array, // Personal Scores, play Number, match result
     level: Number,
     exp: Number,
-    progress: Number
+    progress: Number,
+    total: Number,
+    single: Number,
+    win: Number,
+    lose: Number,
+    top: Number
   }
 
 }, { timestamps: true });
