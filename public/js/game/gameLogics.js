@@ -117,7 +117,7 @@ const gameLogic = (function () {
   };
 
   // Line event trigger.
-  const lineEventTrigger = (settings, world) => {
+  const lineEventTrigger = (settings, world, socket) => {
 
     // Append line div
     const lineDiv = utility.appendTo('div', gameBoard, 'line');
@@ -131,6 +131,11 @@ const gameLogic = (function () {
 
     // triggering
     world.lineEvent = true;
+
+    // Emit info
+    if (settings.mode === 'multi') {
+      socket.emit('liner dots', settings.oppPlayer, dotIdx1, dotIdx2);
+    }
 
     // Spawning.
     gameSpawn.lineSpawner(settings, world, world.dot1, world.dot2, 'line');

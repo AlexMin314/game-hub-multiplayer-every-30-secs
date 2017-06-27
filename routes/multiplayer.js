@@ -17,5 +17,9 @@ module.exports = (io) => {
       io.to(opp.socketId).emit('bonus removal', idx);
     });
 
+    socket.on('liner dots', (opp, d1, d2) => {
+      io.to(opp.socketId).emit('get liner', d1, d2);
+    });
+
   });
 }

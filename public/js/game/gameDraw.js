@@ -1,6 +1,5 @@
 /* Drawing related in render loop */
 let dots = 0;
-let bonus = 0;
 // Draw movement of player and dots.
 const drawMovements = (settings, world, mouse, curPlayer, socket) => {
   // player movement + collision detection.
@@ -27,7 +26,6 @@ const drawMovements = (settings, world, mouse, curPlayer, socket) => {
     }
     //
     if (settings.player === 'player2' && world.bonusChk) {
-      bonus = world.bonusInfo.length;
       const index1 = world.bonusIdx;
       const mInfo1 = world.bonusInfo[world.bonusInfo.length - 1];
       world.bonus.push(new Dots(index1, settings, world, true, mInfo1));
@@ -41,13 +39,11 @@ const drawMovements = (settings, world, mouse, curPlayer, socket) => {
       e.drawDotMove();
     });
 
-    if (settings.player === 'player1') { // temp condition for the test.
-      // line(enemy) movement.
-      if (world.lineEvent) {
-        world.line.forEach(function (e) {
-          e.drawLineMove();
-        });
-      }
+    // line(enemy) movement.
+    if (world.lineEvent) {
+      world.line.forEach(function (e) {
+        e.drawLineMove();
+      });
     }
 
   }

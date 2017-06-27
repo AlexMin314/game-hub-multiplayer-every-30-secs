@@ -30,7 +30,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   // Player related
   settings.playerDotSpeed = 20; // lower = faster respond
   // Debug mode - don't touch.
-  settings.godmode = true;
+  settings.godmode = false;
 
   /* DO NOT CHANGE BELOW */
 
@@ -141,7 +141,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
         gameSpawn.playerSpawner(settings, world, 1);
 
         //Removing start button and start game.
-        gameSpawn.trigger(settings, world);
+        gameSpawn.trigger(settings, world, null, null);
 
         divs.scoreBoard = document.getElementById('score');
         divs.dotNumBoard = document.getElementById('dotNum');
@@ -177,7 +177,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
       setTimeout(() => {
         // setTimeout for waiting tutorial ends.
         gameLogic.difficulty(settings, false, window.innerWidth, window.innerHeight);
-        gameSpawn.trigger(settings, world, settings.playerList);
+        gameSpawn.trigger(settings, world, settings.playerList, socket);
 
         divs.scoreBoard = document.getElementById('score');
         divs.dotNumBoard = document.getElementById('dotNum');
@@ -185,6 +185,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
     }, 100);
 
   }
+
 
 
   /* Render Loops */
@@ -200,6 +201,15 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   socket.on('bonus removal', (idx) => {
     utility.board.removeChild(world.bonus[idx].showInfo().dots);
     world.bonus.splice(idx, 1);
+    world.bonusLength = world.bonus.length;
+  });
+
+  socket.on('get liner', (d1, d2) => {
+    const dot1 = world.dotList[d1];
+    const dot2 = world.dotList[d2];
+    world.lineEvent = true;
+    const lineDiv = utility.appendTo('div', utility.board, 'line');
+    gameSpawn.lineSpawner(settings, world, dot1, dot2, 'line');
   });
 
   (function renderLoop() {
@@ -220,9 +230,9 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
         settings.frame % settings.spawnSpeed === 0 &&
         settings.frame > 100) {
         if (settings.player === 'player1') {
-          gameSpawn.spawnDraw(settings, world, false);
+          gameSpawn.spawnDraw(settings, world, false, socket);
           if (settings.player === 'player1' && settings.mode === 'multi') {
-            socket.emit('pass dotList', settings.oppPlayer, world.dotListInfo, world.bonusInfo);
+            socket.emit('pass dotList', settings.oppPlayer, world.dotListInfo);
           }
         }
       }
@@ -231,16 +241,13 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
         settings.frame % settings.bonusSpawnSpeed === 0 &&
         settings.frame > 400 &&
         settings.player === 'player1') {
-        gameSpawn.spawnDraw(settings, world, true);
-        if (settings.player === 'player1' && settings.mode === 'multi') {
-          socket.emit('pass bonusList', settings.oppPlayer, world.bonusInfo);
-        }
+        gameSpawn.spawnDraw(settings, world, true, socket);
       }
 
     }
 
     // anti-cheat.
-    if (settings.frame % 180 === 0 && settings.mode === 'single') {
+    if (settings.frame % 120 === 0 && settings.mode === 'single') {
       gameLogic.difficulty(settings, true, window.innerWidth, window.innerHeight);
     }
 
