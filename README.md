@@ -1,7 +1,7 @@
 
 # game-every-30-secs-Multiplayer Game!
 <img src="http://i.imgur.com/8sGfNVK.png" width="800px" />
-Playable link : http://quiet-woodland-46921.herokuapp.com/
+Playable link : http://quiet-woodland-46921.herokuapp.com/ (temporal link)
 
 ## Stack
 * Javascript, socket.io, HTML5(no canvas), CSS3
