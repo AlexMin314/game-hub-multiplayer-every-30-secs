@@ -41,15 +41,18 @@ block content
                     img(src=user.profile.picture)
                   else
                     img(src=user.gravatar(60))
-                  span= user.profile.name || user.email || user.id
+                  span= user.profile.name
                   i.caret
                 ul.dropdown-menu
                   li
                     a(href='/account') My Account
-                  li.divider
                   li
                     a(href='/logout') Logout
-              .test LEVEL Display here
+              .levelDisplay
+                #levelNum
+                  span= user.game.level            
+                .progress.progressBar
+                  .progress-bar(role='progressbar', aria-valuenow= user.game.progress+'', aria-valuemin='0', aria-valuemax='100', style="width:"+user.game.progress+'%').progress-bar-striped
             #multiPlay
               | MULTI
               br

@@ -9,7 +9,6 @@ const router = express.Router();
  */
 const homeController = require('../controllers/home');
 const userController = require('../controllers/user');
-const contactController = require('../controllers/contact');
 
 router.get('/', homeController.index);
 router.get('/logout', userController.logout);

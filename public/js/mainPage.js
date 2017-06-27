@@ -10,6 +10,7 @@ const mainRoom = (function () {
 
   const matchtpl = document.getElementById('matchMenuTpl').innerHTML;
   const roomLayoutTpl = document.getElementById('roomLayout').innerHTML;
+  const inviteTpl = document.getElementById('invitationMenu').innerHTML;
 
   // const star = document.getElementById('star1');
   // const star1 = document.getElementById('star2');
@@ -100,7 +101,7 @@ const mainRoom = (function () {
   chatBtnEvent();
 
   // Match inviation window display.
-  socket.on('inviteRoom display', function (roomNum, host, users) {
+  socket.on('inviteRoom display', (roomNum, host, users) => {
     // If opp user in multiplayer menu, turn off the menu for receiving invitation.
     if (matchMenuEle) {
       gloChatInWrap.style.display = 'block';
@@ -109,9 +110,7 @@ const mainRoom = (function () {
     }
     // Render invitation popup menu
     const inviteWindowDiv = utility.appendTo('div', gloChatInWrap, 'inviteWindow', null);
-    inviteWindowDiv.innerHTML = "<div class='col-xs-12'>You've got a<br>Match Invitation</div>";
-    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnC'><p>ACCEPT</p></div>";
-    inviteWindowDiv.innerHTML += "<div class='col-xs-6' id='inviteBtnD'><p>DECLINE</p></div>";
+    inviteWindowDiv.innerHTML = inviteTpl;
     beepSound.play(); // ding dong??
 
     const inviteWindow = document.getElementById('inviteWindow');
@@ -144,8 +143,6 @@ const mainRoom = (function () {
       if (document.getElementById('inviteBtnD')) declineBtn.click();
     }, 5000);
   });
-
-
 
 
   /**

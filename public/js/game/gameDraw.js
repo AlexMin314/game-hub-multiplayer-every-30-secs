@@ -1,5 +1,5 @@
 /* Drawing related in render loop */
-let dots = 0;
+
 // Draw movement of player and dots.
 const drawMovements = (settings, world, mouse, curPlayer, socket) => {
   // player movement + collision detection.
@@ -17,8 +17,8 @@ const drawMovements = (settings, world, mouse, curPlayer, socket) => {
     });
 
     // need dot init here.
-    if (settings.player === 'player2' && dots < world.dotListInfo.length) {
-      dots = world.dotListInfo.length;
+    if (settings.player === 'player2' && world.dotcount < world.dotListInfo.length) {
+      world.dotcount = world.dotListInfo.length;
       const index = world.dotListInfo.length - 1;
       const mInfo = world.dotListInfo[world.dotListInfo.length - 1];
       world.dotList.push(new Dots(index, settings, world, false, mInfo));

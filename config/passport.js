@@ -86,7 +86,14 @@ passport.use(new FacebookStrategy({
           user.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
           user.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
           user.profile.location = (profile._json.location) ? profile._json.location.name : '';
-          user.game.level = 0;
+          user.game.level = 1;
+          user.game.exp = 0;
+          user.game.progress = 0;
+          user.game.total = 0;
+          user.game.win = 0;
+          user.game.lose = 0;
+          user.game.single = 0;
+          user.game.top = 0;
           user.save((err) => {
             done(err, user);
           });
@@ -144,7 +151,14 @@ passport.use(new GitHubStrategy({
           user.profile.name = profile.displayName;
           user.profile.picture = profile._json.avatar_url;
           user.profile.location = profile._json.location;
-          user.game.level = 0;
+          user.game.level = 1;
+          user.game.exp = 0;
+          user.game.progress = 0;
+          user.game.total = 0;
+          user.game.win = 0;
+          user.game.lose = 0;
+          user.game.single = 0;
+          user.game.top = 0;
           user.save((err) => {
             done(err, user);
           });
@@ -200,7 +214,14 @@ passport.use(new TwitterStrategy({
       user.profile.name = profile.displayName;
       user.profile.location = profile._json.location;
       user.profile.picture = profile._json.profile_image_url_https;
-      user.game.level = 0;
+      user.game.level = 1;
+      user.game.exp = 0;
+      user.game.progress = 0;
+      user.game.total = 0;
+      user.game.win = 0;
+      user.game.lose = 0;
+      user.game.single = 0;
+      user.game.top = 0;
       user.save((err) => {
         done(err, user);
       });
@@ -255,7 +276,14 @@ passport.use(new GoogleStrategy({
           user.tokens.push({ kind: 'google', accessToken });
           user.profile.name = profile.displayName;
           user.profile.picture = profile._json.image.url;
-          user.game.level = 0;
+          user.game.level = 1;
+          user.game.exp = 0;
+          user.game.progress = 0;
+          user.game.total = 0;
+          user.game.win = 0;
+          user.game.lose = 0;
+          user.game.single = 0;
+          user.game.top = 0;
           user.save((err) => {
             done(err, user);
           });
@@ -316,7 +344,14 @@ passport.use(new LinkedInStrategy({
           user.profile.name = profile.displayName;
           user.profile.location = profile._json.location.name;
           user.profile.picture = profile._json.pictureUrl;
-          user.game.level = 0;
+          user.game.level = 1;
+          user.game.exp = 0;
+          user.game.progress = 0;
+          user.game.total = 0;
+          user.game.win = 0;
+          user.game.lose = 0;
+          user.game.single = 0;
+          user.game.top = 0;
           user.save((err) => {
             done(err, user);
           });
@@ -353,7 +388,14 @@ passport.use(new OpenIDStrategy({
         user.tokens.push({ kind: 'steam', accessToken: steamId });
         user.profile.name = profile.personaname;
         user.profile.picture = profile.avatarmedium;
-        user.game.level = 0;
+        user.game.level = 1;
+        user.game.exp = 0;
+        user.game.progress = 0;
+        user.game.total = 0;
+        user.game.win = 0;
+        user.game.lose = 0;
+        user.game.single = 0;
+        user.game.top = 0;
         user.save((err) => {
           done(err, user);
         });

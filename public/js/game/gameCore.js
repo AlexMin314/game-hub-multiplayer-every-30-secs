@@ -48,6 +48,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   world.spawnDist = 53;
   world.colorSeed = [null, null, '#14ff00', '#00fff7', '#faff00', '#ff00de'];
   world.addChk = 0;
+  world.dotcount = 0; 
   // Bonus(Star).
   world.bonus = [];
   world.bonusInfo = [];

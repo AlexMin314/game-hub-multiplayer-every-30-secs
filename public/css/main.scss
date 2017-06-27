@@ -196,6 +196,31 @@ label, h3, h4 {
   color: black;
 }
 
+.levelDisplay {
+  height: 30px;
+}
+
+.levelDisplay .progressBar {
+  width: 55%;
+  float: left;
+  margin-top: 2px;
+}
+
+#levelNum {
+  width: 30px;
+  height: 20px;
+  margin-right: 10px;
+  margin-left: 15px;
+  margin-top: 2px;
+  background-color: rgb(46, 46, 46);
+  float: left;
+}
+
+#levelNum span {
+  padding-left: -30px;
+  font-size: 17px;
+}
+
 
 /**
  * Global Chat
