@@ -19,13 +19,13 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   settings.roundStartMax = 18; // num
   settings.roundUpSpawn = 1; // num
   settings.speedScale = 1.0; // multiplyer
-  settings.spawnSpeed = 5000; // ms
+  settings.spawnSpeed = 4000; // ms
   settings.spawnSpeed = (settings.spawnSpeed / 1000 * settings.FPS);
   settings.bounceBuffer = 10; // px
   // Bonus(star).
   settings.bonusSpawn = 1; // num
   settings.bonusMax = 2; // num
-  settings.bonusSpawnSpeed = 6000; // ms
+  settings.bonusSpawnSpeed = 6300; // ms
   settings.bonusSpawnSpeed = (settings.bonusSpawnSpeed / 1000 * settings.FPS);
   // Player related
   settings.playerDotSpeed = 20; // lower = faster respond
@@ -50,12 +50,14 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   world.addChk = 0;
   // Bonus(Star).
   world.bonus = [];
+  world.bonusInfo = [];
   world.star1 = null;
   world.star2 = null;
   world.bonusIdx = 0;
   world.bonusLength = 0;
   world.bonusScore = 100;
   world.bonusCounter = 0;
+  world.bonusChk = false;
   // Line Event(Enemy).
   world.line = [];
   world.lineEvent = false;
@@ -188,7 +190,16 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   /* Render Loops */
   socket.on('get dotList', (dotList) => {
     world.dotListInfo = dotList;
-    //world.dotLength = world.dotList.length;
+  });
+
+  socket.on('get bonusList', (bonusList) => {
+    world.bonusInfo = bonusList;
+    world.bonusChk = true;
+  });
+
+  socket.on('bonus removal', (idx) => {
+    utility.board.removeChild(world.bonus[idx].showInfo().dots);
+    world.bonus.splice(idx, 1);
   });
 
   (function renderLoop() {
@@ -211,9 +222,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
         if (settings.player === 'player1') {
           gameSpawn.spawnDraw(settings, world, false);
           if (settings.player === 'player1' && settings.mode === 'multi') {
-            // pass dot list to server.
-            console.log(world.dotList);
-            socket.emit('pass dotList', settings.oppPlayer, world.dotListInfo);
+            socket.emit('pass dotList', settings.oppPlayer, world.dotListInfo, world.bonusInfo);
           }
         }
       }
@@ -221,8 +230,11 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
       if (!world.pause &&
         settings.frame % settings.bonusSpawnSpeed === 0 &&
         settings.frame > 400 &&
-        (settings.player === 'player1' || settings.mode === 'single')) {
+        settings.player === 'player1') {
         gameSpawn.spawnDraw(settings, world, true);
+        if (settings.player === 'player1' && settings.mode === 'multi') {
+          socket.emit('pass bonusList', settings.oppPlayer, world.bonusInfo);
+        }
       }
 
     }

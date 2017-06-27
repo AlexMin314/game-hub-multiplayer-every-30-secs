@@ -9,5 +9,13 @@ module.exports = (io) => {
       io.to(opp.socketId).emit('get dotList', dotList);
     });
 
+    socket.on('pass bonusList', (opp, bonusList) => {
+      io.to(opp.socketId).emit('get bonusList', bonusList);
+    });
+
+    socket.on('pass bonusInfo', (opp, idx) => {
+      io.to(opp.socketId).emit('bonus removal', idx);
+    });
+
   });
 }

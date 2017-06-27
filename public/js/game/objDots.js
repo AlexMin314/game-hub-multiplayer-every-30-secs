@@ -38,7 +38,7 @@ const Dots = function (dotNum, settings, world, bonus, mData) {
 
       // Starting Point : random, avoid center(player protection)
       const downside = bh - d;
-      const upside = bRect.top + 5 + Math.floor(Math.random() * (d / 2));
+      const upside = bRect.top + 10 + Math.floor(Math.random() * (d / 2));
       const randomSeed = Math.random() * 2 < 1 ? upside : downside;
       topCoord = Math.floor(randomSeed);
       leftCoord = Math.floor(Math.random() * (bw - 150) + 75 + bRect.left);
@@ -51,7 +51,6 @@ const Dots = function (dotNum, settings, world, bonus, mData) {
     }());
   }
   if (settings.player === 'player2' && settings.mode === 'multi') {
-    console.log(mData);
     // Starting Vector randomizing.
     dx = mData.mdx;
     dy = mData.mdy;
@@ -67,8 +66,8 @@ const Dots = function (dotNum, settings, world, bonus, mData) {
       dots.style.left = mData.mleft + bRect.left + 'px';
 
       // coloring
-      if (!mData.bonus) dots.style.backgroundColor = mData.bgc;
-      if (mData.bonus) dots.innerHTML = '<i class="fa fa-star fa-spin"></i>';
+      if (!bonus) dots.style.backgroundColor = mData.bgc;
+      if (bonus) dots.innerHTML = '<i class="fa fa-star fa-spin"></i>';
     }());
   }
 
@@ -85,9 +84,8 @@ const Dots = function (dotNum, settings, world, bonus, mData) {
     }
     if (bonus) mInfo.bonus = true;
 
-    console.log(mInfo.mleft);
-
-    world.dotListInfo.push(mInfo);
+    if (!bonus) world.dotListInfo.push(mInfo);
+    if (bonus) world.bonusInfo.push(mInfo);
   }
 
   // Drawing dot movement

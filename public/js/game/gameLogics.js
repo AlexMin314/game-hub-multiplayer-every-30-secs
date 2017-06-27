@@ -11,7 +11,7 @@ const gameLogic = (function () {
   };
 
   // Collision detection of Player Pattern.
-  const collision = function (arr, world, settings, gameOver, bonus, curPlayer, rosterArr) {
+  const collision = function (arr, world, settings, gameOver, bonus, curPlayer, rosterArr, socket) {
 
     roster = rosterArr;
     let loser;
@@ -56,6 +56,7 @@ const gameLogic = (function () {
           world.bonusCounter++;
           // Remove bonus and play sound.
           removeBonus(e, i, world);
+          if (settings.mode === 'multi') socket.emit('pass bonusInfo', settings.oppPlayer, i);
           if (world.sound && world.bonusCounter % 2 === 1) world.star1.play();
           if (world.sound && world.bonusCounter % 2 === 0) world.star2.play();
         }
