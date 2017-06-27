@@ -5,7 +5,7 @@ const gameSpawn = (function () {
   const gameBoard = document.getElementById('board');
   let rosterArr;
 
-  const trigger = (settings, world, roster) => {
+  const trigger = (settings, world, roster, socket) => {
 
     rosterArr = roster;
 
@@ -21,14 +21,18 @@ const gameSpawn = (function () {
     layout.boardInfo(world);
 
     // Initial dot spawn.
-    for (var k = 0; k < settings.roundStart; k++) {
-      dotSpawner(settings, world, false);
+    if (settings.mode === 'single') {
+      for (var k = 0; k < settings.roundStart; k++) {
+        dotSpawner(settings, world, false);
+      }
     }
 
     // Line event triggering.
-    setTimeout(() => {
-      gameLogic.lineEventTrigger(settings, world);
-    }, world.lineEventTimer);
+    if (settings.player === 'player1') {
+      setTimeout(() => {
+        gameLogic.lineEventTrigger(settings, world, socket);
+      }, world.lineEventTimer);
+    }
 
     // 30 Sec checker.
     world.thirtySecBeep = setInterval(function () {
@@ -44,7 +48,7 @@ const gameSpawn = (function () {
   };
 
   // Dot enemy spawn(bonus: false) | Bonus Spawn(bonus: ture)
-  const spawnDraw = (settings, world, bonus) => {
+  const spawnDraw = (settings, world, bonus, socket) => {
     const leng = bonus ? world.bonusLength : world.dotLength;
     const max = bonus ? settings.bonusMax : settings.roundStartMax;
     const howManyInOneTic = bonus ? settings.bonusSpawn : settings.roundUpSpawn;
@@ -52,6 +56,9 @@ const gameSpawn = (function () {
       // Current spawn tic : enemy(1), start(1).
       for (var i = 0; i < howManyInOneTic; i++) {
         dotSpawner(settings, world, bonus);
+      }
+      if (settings.player === 'player1' && settings.mode === 'multi' && bonus) {
+        socket.emit('pass bonusList', settings.oppPlayer, world.bonusInfo);
       }
     }
   };
@@ -68,13 +75,13 @@ const gameSpawn = (function () {
     }
   };
 
-  const playerSpawner = (settings, world) => {
-    world.playerList.push(new Player(settings, world));
+  const playerSpawner = (settings, world, player) => {
+    world.playerList.push(new Player(settings, world, player));
     world.playerLength = world.playerList.length;
   };
 
-  const lineSpawner = (settings, world, x1, y1, x2, y2, id) => {
-    world.line.push(new LineObj(settings, world, x1, y1, x2, y2, id));
+  const lineSpawner = (settings, world, d1, d2, id) => {
+    world.line.push(new LineObj(settings, world, d1, d2, id));
   };
 
   // Create new dots (player, enemy, bonus).

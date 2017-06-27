@@ -9,6 +9,9 @@ const layout = (function () {
   divInfo.pause = document.getElementById('pause');
   divInfo.gameBoard = document.getElementById('board');
 
+  let scoreDiv;
+  let dotNum;
+
   // Appending Start Button to game board.
   const startButton = () => {
 
@@ -85,18 +88,20 @@ const layout = (function () {
   // Append Score and Dot number
   const boardInfo = (world) => {
     // Adding Score at right side of game board.
-    const scoreDiv = utility.appendTo('div', divInfo.gameBoard, 'score');
+    scoreDiv = utility.appendTo('div', divInfo.gameBoard, 'score');
     scoreDiv.innerHTML = 'SCORE.<br>' + world.score;
 
     // Adding Dot number at right side of game board.
-    const dotNum = utility.appendTo('div', divInfo.gameBoard, 'dotNum');
+    dotNum = utility.appendTo('div', divInfo.gameBoard, 'dotNum');
     dotNum.innerHTML = 'DOTS<br>' + world.dotLength;
   };
 
   // Updating Dot Numbers and Scores on gameBoard.
   const updatingBoard = (scoreBoard, dotNumBoard, world) => {
-    scoreBoard.innerHTML = 'SCORE<br>' + world.score;
-    dotNumBoard.innerHTML = 'DOTS<br>' + world.dotLength;
+    // scoreBoard.innerHTML = 'SCORE<br>' + world.score;
+    // dotNumBoard.innerHTML = 'DOTS<br>' + world.dotLength;
+    scoreDiv.innerHTML = 'SCORE<br>' + world.score;
+    dotNum.innerHTML = 'DOTS<br>' + world.dotLength;
   };
 
   // Showing starting messages.

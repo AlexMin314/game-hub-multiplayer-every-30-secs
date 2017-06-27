@@ -1,6 +1,7 @@
 const mainRoom = (function () {
 
   const socket = io.connect('/', { secure: true, transports: ['websocket'] });
+  //const socket = io.connect('http://192.168.219.166:3000', { secure: true, transports: ['websocket'] });
 
   const gloalChat = document.getElementById('globalChat');
   let gloChatInWrap = document.getElementById('globalChatInnerWrapper');

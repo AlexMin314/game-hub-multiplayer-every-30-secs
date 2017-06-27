@@ -1,47 +1,92 @@
-const Dots = function (dotNum, settings, world, bonus) {
+const Dots = function (dotNum, settings, world, bonus, mData) {
 
   // Settings
   let dots = null;
   let x = 0;
   let y = 0;
   let radius = 0;
+  let dx;
+  let dy;
+  let topCoord;
+  let leftCoord;
+  const bRect = utility.board.getBoundingClientRect();
 
-  // Speed/Direction Seed randomizing.
-  const speedX = Math.floor(Math.random() * 4 + 2);
-  const speedY = Math.floor(Math.random() * 4 + 2);
-  const mult = settings.speedScale;
+  if (settings.player === 'player1') {
+    // Speed/Direction Seed randomizing.
+    const speedX = Math.floor(Math.random() * 4 + 2);
+    const speedY = Math.floor(Math.random() * 4 + 2);
+    const mult = settings.speedScale;
 
-  // Starting Vector randomizing.
-  let dx = Math.random() > 0.5 ? speedX * mult : -speedX * mult;
-  let dy = Math.random() > 0.5 ? speedY * mult : -speedY * mult;
+    // Starting Vector randomizing.
+    dx = Math.random() > 0.5 ? speedX * mult : -speedX * mult;
+    dy = Math.random() > 0.5 ? speedY * mult : -speedY * mult;
 
-  // Initiation.
-  (function () {
-    // Create an enemy dot.
-    dots = bonus ?
-      gameSpawn.createDots('bonus', null, dotNum) :
-      gameSpawn.createDots('dots', null, dotNum);
+    // Initiation.
+    (function () {
+      // Create an enemy dot.
+      dots = bonus ?
+        gameSpawn.createDots('bonus', null, dotNum) :
+        gameSpawn.createDots('dots', null, dotNum);
 
-    // distance from the center
-    const d = world.spawnDist;
-    const bRect = utility.board.getBoundingClientRect();
+      // distance from the center
+      const d = world.spawnDist;
+      //const bRect = utility.board.getBoundingClientRect();
 
-    const mode = settings.mode;
-    console.log(mode);
-    let bw = mode === 'single' ? window.innerHeight : bRect.width;
-    let bh = mode === 'single' ? window.innerWidth : bRect.height;
+      const mode = settings.mode;
+      const bw = mode === 'single' ? window.innerHeight : bRect.width;
+      const bh = mode === 'single' ? window.innerWidth : bRect.height;
 
-    // Starting Point : random, avoid center(player protection)
-    const downside = bh - d - 10;//Math.random() * (bh / d) + (bh * (d - 1) / d) - 70;
-    const upside = bRect.top + d + 10;//Math.random() * (bh / d) + 70;
-    const randomSeed = Math.random() * 2 < 1 ? upside : downside;
-    dots.style.top = Math.floor(randomSeed) + 'px';
-    dots.style.left = Math.floor(Math.random() * (bw - 300) + 150 + bRect.left) + 'px';
+      // Starting Point : random, avoid center(player protection)
+      const downside = bh - d;
+      const upside = bRect.top + 10 + Math.floor(Math.random() * (d / 2));
+      const randomSeed = Math.random() * 2 < 1 ? upside : downside;
+      topCoord = Math.floor(randomSeed);
+      leftCoord = Math.floor(Math.random() * (bw - 150) + 75 + bRect.left);
+      dots.style.top = topCoord + 'px';
+      dots.style.left = leftCoord + 'px';
 
-    // coloring
-    if (!bonus) dots.style.backgroundColor = world.colorSeed[speedX];
-    if (bonus) dots.innerHTML = '<i class="fa fa-star fa-spin"></i>';
-  }());
+      // coloring
+      if (!bonus) dots.style.backgroundColor = world.colorSeed[speedX];
+      if (bonus) dots.innerHTML = '<i class="fa fa-star fa-spin"></i>';
+    }());
+  }
+  if (settings.player === 'player2' && settings.mode === 'multi') {
+    // Starting Vector randomizing.
+    dx = mData.mdx;
+    dy = mData.mdy;
+
+    // Initiation.
+    (function () {
+      // Create an enemy dot.
+      dots = bonus ?
+        gameSpawn.createDots('bonus', null, dotNum) :
+        gameSpawn.createDots('dots', null, dotNum);
+
+      dots.style.top = mData.mtop + bRect.top + 'px';
+      dots.style.left = mData.mleft + bRect.left + 'px';
+
+      // coloring
+      if (!bonus) dots.style.backgroundColor = mData.bgc;
+      if (bonus) dots.innerHTML = '<i class="fa fa-star fa-spin"></i>';
+    }());
+  }
+
+  // multiplayer info
+  if (settings.mode === 'multi' && settings.player === 'player1') {
+    const mInfo = {};
+    mInfo.mdx = dx;
+    mInfo.mdy = dy;
+    mInfo.mtop = topCoord - bRect.top;
+    mInfo.mleft = leftCoord - bRect.left;
+    if (!bonus) {
+      mInfo.bgc = dots.style.backgroundColor;
+      mInfo.bonus = false;
+    }
+    if (bonus) mInfo.bonus = true;
+
+    if (!bonus) world.dotListInfo.push(mInfo);
+    if (bonus) world.bonusInfo.push(mInfo);
+  }
 
   // Drawing dot movement
   this.drawDotMove = function () {

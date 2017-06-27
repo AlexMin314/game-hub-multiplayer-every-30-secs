@@ -37,10 +37,17 @@ label, h3, h4 {
  * @type {[type]}
  */
 /* Dots */
-.playerDot {
+#playerDot1 {
   height: 40px;
   width: 40px;
   background-color: red;
+  position: absolute;
+  border-radius: 50%; }
+
+#playerDot2 {
+  height: 40px;
+  width: 40px;
+  background-color: #2a7bd0;
   position: absolute;
   border-radius: 50%; }
 
