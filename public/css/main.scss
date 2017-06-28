@@ -26,14 +26,11 @@ p {
   font-size: 19px;
 }
 
-label, h3, h4 {
+label, h2, h3, h4 {
   color: white;
   font-weight: normal;
 }
 
-#bgImgae {
-
-}
 
 // video {
 //   position: fixed;
@@ -204,6 +201,7 @@ label, h3, h4 {
   width: 55%;
   float: left;
   margin-top: 2px;
+  background: rgba(161, 161, 161, 0.5);
 }
 
 #levelNum {

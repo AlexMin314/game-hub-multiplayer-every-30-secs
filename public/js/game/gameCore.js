@@ -3,7 +3,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   /* Game settings */
 
   const settings = {};
-  settings.FPS = 30;
+  settings.FPS = 35;
   settings.frame = 0;
   settings.mode = mode; // game mode
   settings.pList = rosterArr; // ['player1', 'player2']
@@ -48,7 +48,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   world.spawnDist = 53;
   world.colorSeed = [null, null, '#14ff00', '#00fff7', '#faff00', '#ff00de'];
   world.addChk = 0;
-  world.dotcount = 0; 
+  world.dotcount = 0;
   // Bonus(Star).
   world.bonus = [];
   world.bonusInfo = [];
@@ -225,7 +225,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
 
       layout.updatingBoard(divs.scoreBoard, divs.dotNumBoard, world);
 
-      if (settings.frame % 60 === 0) world.score++;
+      if (settings.frame % (settings.FPS * 2) === 0) world.score++;
 
       if (!world.pause &&
         settings.frame % settings.spawnSpeed === 0 &&
@@ -248,7 +248,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
     }
 
     // anti-cheat.
-    if (settings.frame % 120 === 0 && settings.mode === 'single') {
+    if (settings.frame % (settings.FPS * 3) === 0 && settings.mode === 'single') {
       gameLogic.difficulty(settings, true, window.innerWidth, window.innerHeight);
     }
 
@@ -287,6 +287,4 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
       document.getElementById('godmode').addEventListener('click', event.godBtn, false);
     }
   }());
-
-
 };

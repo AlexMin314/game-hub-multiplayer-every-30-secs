@@ -28,7 +28,9 @@ p {
   color: grey;
   font-size: 19px; }
 
-label, h3, h4 {
+h3,
+h4,
+label {
   color: white;
   font-weight: normal; }
 
@@ -136,7 +138,7 @@ label, h3, h4 {
   height: 220px;
   width: 300px;
   margin: 0 auto 30px;
-  border: 0px;
+  border: 0;
   padding-top: 10px; }
 
 #gameOver p {
@@ -158,6 +160,32 @@ label, h3, h4 {
 
 #gameOver #rank0 {
   color: yellow; }
+
+#socialBtn {
+  text-align: center;
+  font-size: 30px;
+  padding-left: 12px; }
+
+#socialBtn i {
+  margin: 10px 15px;
+  color: white;
+  transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -ms-transition: all ease 0.3s; }
+
+#socialBtn .fa-facebook {
+  margin-right: 22px; }
+
+#socialBtn .fa-facebook:hover {
+  color: #4060A5; }
+
+#socialBtn .fa-twitter:hover {
+  color: #00ABE3; }
+
+#socialBtn .fa-google-plus:hover {
+  color: #e64522; }
 
 #wrapper {
   height: 400px;

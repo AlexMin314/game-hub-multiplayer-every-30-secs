@@ -13,5 +13,3 @@ const gameStart = function(socket) {
   });
 
 };
-
-//data, mode, rosterArr, socket

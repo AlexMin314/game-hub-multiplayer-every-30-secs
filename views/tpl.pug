@@ -29,7 +29,7 @@ script#roomLayout(type='text/template')
       </div>
     </div>
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 mainComponent">
-      <div id="player2Info"><i id="exitBtn" aria-hidden="true" class="fa fa-sign-out fa-3x">        </i>
+      <div id="player2Info"><i id="exitBtn" aria-hidden="true" class="fa fa-sign-out fa-3x"></i>
         <p>Player 2</p>
       </div>
       <div id="player2ReadyBtn">
@@ -42,3 +42,17 @@ script#invitationMenu(type='text/template')
   <div class='col-xs-12'>You've got a<br>Match Invitation</div>
   <div class='col-xs-6' id='inviteBtnC'><p>ACCEPT</p></div>
   <div class='col-xs-6' id='inviteBtnD'><p>DECLINE</p></div>
+
+script#socialShareBtns(type='text/template')
+  a(href='#', onclick="javascript:window.open('https://www.facebook.com/sharer/sharer.php?u='\
+  +encodeURIComponent(document.URL)+'&t='+encodeURIComponent(document.title), 'facebooksharedialog',\
+  'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;", target='_blank', alt='Share on Facebook')
+    i.fa.fa-lg.fa-facebook
+  a(href='#', onclick="javascript:window.open('https://twitter.com/intent/tweet?text=[%EA%B3%B5%EC%9C%A0]%20'\
+  +encodeURIComponent(document.URL)+'%20-%20'+encodeURIComponent(document.title), 'twittersharedialog',\
+  'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;", target='_blank', alt='Share on Twitter')
+    i.fa.fa-lg.fa-twitter
+  a(href='#', onclick="javascript:window.open('https://plus.google.com/share?url='\
+  +encodeURIComponent(document.URL), 'googleplussharedialog','menubar=no,toolbar=no,resizable=yes,\
+  scrollbars=yes,height=350,width=600');return false;", target='_blank', alt='Share on Google+')
+    i.fa.fa-lg.fa-google-plus
