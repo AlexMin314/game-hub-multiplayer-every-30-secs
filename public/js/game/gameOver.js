@@ -83,7 +83,7 @@ const gameOverAndResult = (settings, world, data) => {
   }, false);
 
 };
-// // Game over and Showing game result.
+
 // const gameOverAndResult = (settings, world, data) => {
 //
 //   const gameBoard = document.getElementById('board');
