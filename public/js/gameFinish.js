@@ -39,6 +39,10 @@ const gameFinish = function(socket) {
     const retryDiv = utility.appendTo('div', wrapper, 'retry')
     retryDiv.innerHTML = '<i class="fa fa-repeat"></i>  RETRY';
 
+    const socialBtn = utility.appendTo('div', wrapper, 'socialBtn');
+    const socialShareBtnsTpl = document.getElementById('socialShareBtns').innerHTML;
+    socialBtn.innerHTML += socialShareBtnsTpl;
+
     // Event Listening on RETRY.
     document.getElementById('retry').addEventListener('click', (e) => {
       // Beep sound when retry clicked.

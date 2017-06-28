@@ -68,8 +68,7 @@ const gameOverAndResult = (settings, world, data) => {
 
   const socialBtn = utility.appendTo('div', wrapper, 'socialBtn');
   const socialShareBtnsTpl = document.getElementById('socialShareBtns').innerHTML;
-
-  socialBtn.innerHTML += socialShareBtnsTpl
+  socialBtn.innerHTML += socialShareBtnsTpl;
 
   // Event Listening on RETRY.
   document.getElementById('retry').addEventListener('click', (e) => {
