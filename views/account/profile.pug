@@ -3,19 +3,20 @@ extends ../layout
 block content                                          
   .container-fluid#accContainer
     .row.col-md-6.col-md-offset-4.col-sm-8.col-sm-offset-3.col-xs-10.col-xs-offset-1
-      h3 Profile Information
+      h2 Profile Information
+      a(href='/')
+        i#exitBtn.fa.fa-sign-out.fa-3x(aria-hidden='true')
       form.form-horizontal(action='/account/profile', method='POST')
         input(type='hidden', name='_csrf', value=_csrf)
         .form-group
           label.col-sm-3.control-label(for='email') History
           .col-sm-7
             h4= 'Top Score : ' + user.game.top
-            h4= 'Avg Score : ' + user.game.exp / (user.game.single+user.game.total)
+            h4= 'Avg Score : ' + Math.floor(user.game.exp / (user.game.single+user.game.total))
             h4= 'Singleplay : ' + user.game.single
-            h4= 'Total Multiplayer Match : ' + user.game.total
-            h4= 'Win : ' + user.game.win
-            h4= 'Lose : ' + user.game.lose
-            h4= 'Exp : ' + user.game.exp
+            h4= 'Multiplayer Match : ' + user.game.total
+            h4= 'Win : ' + user.game.win + ' <> Lose : ' + user.game.lose
+            h4= 'Exp : ' + user.game.exp + ' points'
             h4= 'Level : ' + user.game.level
         .form-group
           label.col-sm-3.control-label(for='email') Email
