@@ -8,6 +8,8 @@ const matchRoom = function (socket, chatBtnEvent) {
   const star1 = document.getElementById('star2');
   const clicked = document.getElementById('clicked');
   const beepSound = document.getElementById('counter');
+  const matchBgsound = document.getElementById('match');
+  matchBgsound.volume = '0.1';
 
 
   let gamechk1 = false;
@@ -23,6 +25,9 @@ const matchRoom = function (socket, chatBtnEvent) {
 
   // Render detailed info of match room.
   socket.on('Matchroom display', (host, opp) => {
+
+    matchBgsound.play();
+
     // Set host: player1 | opp: player2.
     host.socketId === socket.id ? player1 = true : player2 = true;
 
@@ -110,6 +115,7 @@ const matchRoom = function (socket, chatBtnEvent) {
     }, 3000);
     setTimeout(() => {
       startingCount('Game Start ...');
+      matchBgsound.pause();
     }, 4000);
     setTimeout(() => {
       const player = player1 ? 'player1' : 'player2';
