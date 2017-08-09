@@ -38,7 +38,7 @@ passport.deserializeUser((id, done) => {
  */
 
 /**
- * Sign in with Facebook.
+ * Sign in with Facebook..
  */
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_ID,
