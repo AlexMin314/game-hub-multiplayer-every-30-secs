@@ -3,6 +3,8 @@ const mainRoom = (function () {
   const socket = io.connect('/', { secure: true, transports: ['websocket'] });
   //const socket = io.connect('http://192.168.219.166:3000', { secure: true, transports: ['websocket'] });
 
+  console.log(socket);
+
   const gloalChat = document.getElementById('globalChat');
   let gloChatInWrap = document.getElementById('globalChatInnerWrapper');
   const charInput = document.getElementsByClassName('chatInput')[0];
@@ -23,6 +25,7 @@ const mainRoom = (function () {
   let matchMenuEle;
 
   const multiPlayerBtn = document.getElementById('multiPlay');
+
 
   /**
    * Chat related.

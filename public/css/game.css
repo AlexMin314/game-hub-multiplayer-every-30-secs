@@ -4,7 +4,6 @@ html {
   background-color: black;
   overflow: auto;
   overflow-x: hidden;
-  overflow-y: hidden;
   overflow-style: none; }
 
 body {
@@ -13,7 +12,6 @@ body {
   font-family: inherit;
   overflow: auto;
   overflow-x: hidden;
-  overflow-y: hidden;
   overflow-style: none; }
 
 *::-webkit-media-controls-start-playback-button {
