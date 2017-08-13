@@ -3,12 +3,6 @@ const gameEvent = (settings, world, mouse) => {
   /* Event Listener related */
 
   return {
-
-    getMousePos: function (e) {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    },
-
     soundBtn: function (e) {
       if (world.sound) world.clickSound.play();
       world.sound = !(world.sound);

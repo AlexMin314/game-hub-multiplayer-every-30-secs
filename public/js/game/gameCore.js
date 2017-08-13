@@ -279,7 +279,18 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
         if (settings.frame % 10 === 0) socket.emit('player mouse', settings.oppPlayer, mouse)
       }
     }, false);
-    // document.addEventListener('mousemove', event.getMousePos, false);
+    document.addEventListener('touchmove', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      mouse.x = e.touches[0].clientX;
+      mouse.y = e.touches[0].clientY;
+      if (settings.mode === 'multi') {
+        mouse.x1 = mouse.x - bRect.left;
+        mouse.y1 = mouse.y - bRect.top;
+        if (settings.frame % 10 === 0) socket.emit('player mouse', settings.oppPlayer, mouse)
+      }
+    }, false);
+
     if (settings.mode === 'single') {
       document.addEventListener('keydown', event.gamePause, false);
       document.getElementById('gameStart').addEventListener('click', startClick, false);
