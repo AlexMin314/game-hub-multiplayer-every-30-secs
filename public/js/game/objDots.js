@@ -38,10 +38,10 @@ const Dots = function (dotNum, settings, world, bonus, mData) {
 
       // Starting Point : random, avoid center(player protection)
       const downside = bh - d;
-      const upside = bRect.top + 10 + Math.floor(Math.random() * (d / 2));
+      const upside = bRect.top + 110; // + Math.floor(Math.random() * (d / 2));
       const randomSeed = Math.random() * 2 < 1 ? upside : downside;
       topCoord = Math.floor(randomSeed);
-      leftCoord = Math.floor(Math.random() * (bw - 150) + 75 + bRect.left);
+      leftCoord = Math.floor(Math.random() * (bw - 200) + 100 + bRect.left);
       dots.style.top = topCoord + 'px';
       dots.style.left = leftCoord + 'px';
 
