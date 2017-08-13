@@ -287,3 +287,46 @@ label {
   animation-duration: 1s;
   animation-fill-mode: both;
 }
+
+@media screen and (max-width:480px) {
+  #gameStart {
+    height: 150px;
+    width: 250px;
+    font-size: 50px;
+    padding: 0;
+    margin-bottom: 10px;
+    padding-top: 30px;
+    top: 40%;
+  }
+  #wrapper {
+    height: 100%;
+    width: 300px;
+    padding: 0;
+  }
+  #instruction {
+    margin-top: 150%;
+  }
+  #pause {
+    width: 250px;
+    margin-top: 40%;
+  }
+}
+@media screen and (max-width:330px) {
+  #wrapper {
+    width: 250px;
+  }
+}
+@media screen and (max-width:740px) and (max-height:420px) {
+  #gameStart {
+    font-size: 40px;
+    top: 45%;
+    height: 100px;
+  }
+  #wrapper {
+    height: 100%;
+    padding: 0;
+  }
+  #instruction {
+    margin-top: 60%;
+  }
+}
