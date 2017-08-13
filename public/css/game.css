@@ -252,3 +252,33 @@ label {
   animation-name: fadeInUp;
   animation-duration: 1s;
   animation-fill-mode: both; }
+
+@media screen and (max-width: 480px) {
+  #gameStart {
+    height: 170px;
+    width: 250px;
+    font-size: 50px;
+    padding: 0;
+    margin-bottom: 10px;
+    padding-top: 20px; }
+  #wrapper {
+    width: 300px;
+    padding: 0; }
+  #retry {
+    width: 250px; }
+  #scoreResult, #pause {
+    width: 250px; } }
+
+@media screen and (max-width: 330px) {
+  #wrapper {
+    width: 250px; } }
+
+@media screen and (max-width: 740px) and (max-height: 420px) {
+  #gameStart {
+    font-size: 40px;
+    height: 100px; }
+  #wrapper {
+    padding: 0;
+    height: 300px; }
+  #instruction {
+    margin-top: 60%; } }

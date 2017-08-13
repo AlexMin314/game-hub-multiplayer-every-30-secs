@@ -21,6 +21,10 @@ const drawMovements = (settings, world, mouse, curPlayer, socket) => {
       world.dotcount = world.dotListInfo.length;
       const index = world.dotListInfo.length - 1;
       const mInfo = world.dotListInfo[world.dotListInfo.length - 1];
+
+      console.log((world.timeGap * settings.FPS * mInfo.mdx) / 1000);
+      console.log((world.timeGap * settings.FPS * mInfo.mdy) / 1000);
+
       world.dotList.push(new Dots(index, settings, world, false, mInfo));
       world.dotLength = world.dotList.length;
     }

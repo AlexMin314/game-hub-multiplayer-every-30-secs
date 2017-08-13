@@ -3,7 +3,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   /* Game settings */
 
   const settings = {};
-  settings.FPS = 35;
+  settings.FPS = 40;
   settings.frame = 0;
   settings.mode = mode; // game mode
   settings.pList = rosterArr; // ['player1', 'player2']
@@ -75,6 +75,7 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
   world.spaceBar = false;
   world.clickSound = null;
   world.gameover = false;
+  world.timeGap = 0;
 
   // Controller.
   const mouse = {};
@@ -190,7 +191,10 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
 
 
   /* Render Loops */
-  socket.on('get dotList', (dotList) => {
+  socket.on('get dotList', (dotList, timeGap) => {
+    const checkTimeGap = new Date();
+    world.timeGap = checkTimeGap.getTime() - timeGap;
+    console.log(world.timeGap)
     world.dotListInfo = dotList;
   });
 
@@ -233,7 +237,8 @@ const Game = function (cPlayer, mode, rosterArr, socket) {
         if (settings.player === 'player1') {
           gameSpawn.spawnDraw(settings, world, false, socket);
           if (settings.player === 'player1' && settings.mode === 'multi') {
-            socket.emit('pass dotList', settings.oppPlayer, world.dotListInfo);
+            const timeGap = new Date();
+            socket.emit('pass dotList', settings.oppPlayer, world.dotListInfo, timeGap.getTime());
           }
         }
       }
