@@ -7,9 +7,14 @@ const gameStart = function(socket) {
   });
 
   socket.on('multiplay start', (curPlayer, rosterArr) => {
-    const container = document.getElementById('mainContainer')
+    const container1 = document.getElementById('mainContainer')
     container.innerHTML = '';
     Game(curPlayer, 'multi', rosterArr, socket);
   });
+  // socket.on('multiplay start', (curPlayer, rosterArr) => {
+  //   const container = document.getElementById('mainContainer')
+  //   container.innerHTML = '';
+  //   Game(curPlayer, 'multi', rosterArr, socket);
+  // });
 
 };
